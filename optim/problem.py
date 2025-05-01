@@ -5,7 +5,7 @@ from scipy.optimize import Bounds, NonlinearConstraint
 from collections import OrderedDict
 
 from common.general import compose
-from optim.utils import unpack_bounds
+from optim.utils import default_bounds, unpack_bounds
 
 
 def name_generator(dtype=str):
@@ -30,7 +30,7 @@ class Problem:
         self.parametrization = parametrization
         
     def add_constraint(self, func, name=None, keep_feasible=True):
-        name = f"constraint_{next(self.counter)}" if name is None else name
+        name = f"constraint_{self.counter}" if name is None else name
         self.counter += 1
         assert not name in self.constraints, f"'{name}' already exsits!"
         lb, ub = (-np.inf, 0.000)
@@ -62,7 +62,9 @@ class Problem:
         return constraints
         
     def add_bounds(self, *args, keep_feasible=True):
-        if isinstance(args[0], Bounds):
+        if args[0] is None:
+            self.bounds = default_bounds()
+        elif isinstance(args[0], Bounds):
             self.bounds = args[0]
         else:
             if len(args) == 1:

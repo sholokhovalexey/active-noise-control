@@ -36,7 +36,7 @@ class SolverGradient(Solver):
         self.options.update(
             {
                 "maxiter": self.maxiter, 
-                "verbose": 1, # 2 - per iter
+                "verbose": 0, # 1 - final, 2 - per iter
             }
         )
         
@@ -54,7 +54,7 @@ class SolverGradient(Solver):
             options=self.options,
         )
         # print("Success:", res.success)
-        print(res)
+        # print(res)
         
         return res.x
 
