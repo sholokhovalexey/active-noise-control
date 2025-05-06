@@ -28,7 +28,6 @@ Based on this reduced computational complexity, the sampling frequency could be 
 
 
 
-
 #### ANC system structure
 
 XXX general structure XXX
@@ -86,7 +85,7 @@ $$
 Under this assumption, design of a hybrid ANC controller, - minimization of the sensitivity function $S$ wrt to $FF$ and $FB$, - decouples into two independent optimization problems. Next sections present detailed discussion about the controller design.
 
 
-### [Feedback] controller design
+### Feedback controller design
 
 Let consider a feedback control system with linear time-invariant stable plant $P$, defined by its frequency response.
 
@@ -94,21 +93,30 @@ The objective is to synthesize a linear time-invariant controller $K$ that achie
 This can be achieved by minimizing the *sensitivity function*, *i.e.*, the *closed-loop* transfer function:
 %% S = \frac{E}{D} = %%
 $$ S = \frac{1}{1 + K \cdot P} = \frac{1}{1 + L} $$ 
-It can also be represented in decibels by $\mathrm{RA}(\mathrm{dB}) = 20\log_{10}|S|$ to practically mean the *relative noise attenuation* after control.
-Here, $L$ denotes the *open-loop* transfer function. 
+In the case of feedback ANC, the plant is $P$ is given by the measured secondary path response(s). Here, $L$ denotes the *open-loop* transfer function. 
+The sensitivity can also be represented in decibels by $\mathrm{RA}(\mathrm{dB}) = 20\log_{10}|S|$ to practically mean the *relative noise attenuation* after control.
 
-In the case of feedback ANC, the plant is $P$ is given by the measured secondary path response.
+##### Additional considerations
+The following facts can be helpful for designing an ANC system for headphones.
+- First, the human auditory system is less sensitive at low frequencies. See the [equal-loudness contours](https://en.wikipedia.org/wiki/Equal-loudness_contour). 
+- Second, a headphone system damps ambient noise in the high frequency region, that is, the noise is already partially attenuated by passive sound isolation.
+
+Based on these assumptions, the objective function for controller design may be altered to put less emphasis on certain frequency regions (low and high frequencies).  This can be done by using a weighed sensitivity function obtained by applying [frequency weighting](https://en.wikipedia.org/wiki/Weighting) to the sensitivity function. A suitable frequency weighting function can be defined based on properties of the human ear (for instance, see [A-weighting](https://en.wikipedia.org/wiki/A-weighting)) as well as the desired noise attenuation band.
+
+Below in an illustration of weighting functions used for FF and FB controllers design.
+<img src="images/weighting_curves.png" width="500">
 
 
 #### Controller representation
 
-In [] a method for designing an ANC controller represented as a FIR filter was proposed. The coefficients of the filter were found by solving a *convex optimization* problem. Despite convenience of the problem formulation and uniqueness of a solution, practical implementations of FIR controllers are usually restricted by their computational complexity. Therefore, IIR filters are usually preferred for implementing ANC controllers. Also, a cascade of 5-10 biquad filters can approximate a prescribed frequency response with reasonable accuracy, required for building a competitive ANC system. Here, cascades of biquad filters are used as the feedback and feedforward controllers, which is in accordance with the most commercial ANC headphones currently available on the market (2024). 
+In [1] a method for designing an ANC controller represented as a FIR filter was proposed. The coefficients of the filter were found by solving a *convex optimization* problem. Despite convenience of the problem formulation and uniqueness of a solution, practical implementations of FIR controllers are usually restricted by their computational complexity. Therefore, IIR filters are usually preferred for implementing ANC controllers. Also, a cascade of 5-10 biquad filters can approximate a prescribed frequency response with reasonable accuracy, required for building a competitive ANC system. Here, **cascades of biquad filters** are used as the feedback and feedforward controllers, which is in accordance with the most commercial ANC headphones currently available on the market (2024). 
 
 ##### Filter parameterization
 
-Instead of the general form represented with poles and zeros, several kinds of parametric biquad filters [with minimum phase frequency responses] are considered here. The corresponding transfer functions can be written as follows:
+Instead of the general form represented with poles and zeros, several kinds of parametric biquad filters are considered here. See [3] for details.
 
-XXX
+%% The corresponding transfer functions can be written as follows: %%
+
 
 
 #### Stability constraints
@@ -120,6 +128,8 @@ In practice, it is not enough that a system is stable. There must be some margin
 
 The gain margin and phase margins on the Nyquist plot:
 <img src="images/margins.jpg" width="300">
+
+In a practical situation a phase margin of 45° and a gain margin of 6 dB are often used.
 
 One of the ways to define a constraint is the following:
 $$ |1 - L(\omega)| - |1+L(\omega)| \leq 2a, \forall \omega \in [0, \infty) $$
@@ -164,17 +174,36 @@ $$
 \end{equation}
 $$
 
-In summary, given the frequency response of the plant (secondary path) ++++++++++++++++++++++++++++
+#### Problem formulation
+
+In summary, given the frequency response of the plant (secondary path), a feedback controller can be designed by solving a constrained optimization problem. The problem includes the objective function defined by magnitude of the weighed sensitivity function, and the constraints outlined before.
 
 Due to discretization, the number of frequency points used in the calculations should be large enough to ensure that the values of $L(\omega)$ between two frequency points are still outside the forbidden region.
 
-#### --summary: optimization problem formulation and solver description--
+#### Solver
 
-xxx
-The optimization problem described by Eq. (19) is non-convex since the controller has an IIR structure. 
-xxx
+The optimization problem described above is highly non-convex since the controller has an IIR structure. 
 
-### [Feedforward] controller design
+Consequently, [metaheuristics](https://en.wikipedia.org/wiki/Metaheuristic) are often used for solving such problems. These algorithms aim to find a global (rather than local) optimum, and although they have no guarantee of good performance, they been found to perform acceptably in many use cases. Examples of such algorithms include evolutionary algorithms, particle swarm optimization, etc.
+
+To use off-the-shelf metaheuristics available in open-source Python packages, the original optimization problem should be formulated as an unconstrained problem similar to [2].
+
+### Feedforward controller design
+
+Designing a feedforward ANC controller is technically similar to designing a feedback controller. In both cases one needs to minimize the following function (of its weighed version) wrt to either $FF$ or $FB$ parameters:
+$$
+S = \frac{1 + \frac{SP_{ERP}}{PP_{ERP}} \cdot FF} {1 + FB \cdot SP_{ERP}}
+$$
+However, in the case of FF ANC, the problem is unconstrained because feedforward controllers are always stable.
+
+
+### Results
+
+Given the synthesized controllers, one can estimate ANC performance using a pair of audio recordings from the reference and the error mics. Below is a result of running ANC system simulation.
+
+<img src="images/attenuation.png" width="600">
+
+Here, the curve labeled as FF+FB corresponds to the hybrid system, while the other curves show individual performance of each controller. 
 
 
 ### ANC controller design issues
@@ -183,14 +212,20 @@ xxx
 Multiplicative uncertainty model:
 
 $S(\omega) = S_0(\omega)(1 + W(\omega) \cdot \Delta(\omega))$
-Here, $\Delta$ is a subset of complex number that fulfills the condition $|\Delta(\omega)| \leq 1, \forall \omega$.
+Here, $\Delta$ is a subset of complex numbers that fulfills the condition $|\Delta(\omega)| \leq 1, \forall \omega$.
 
 $W(\omega) = \max_i | \frac{S_i(\omega) - S_0(\omega)}{S_0(\omega)} |$
 
 $S(\omega) = S_0(\omega)(1 + W(\omega) \cdot \Delta(\omega)) = S_0(\omega) + r\cdot\Delta(\omega)$
 
 $r = S_0(\omega) \max_i | \frac{S_i(\omega) - S_0(\omega)}{S_0(\omega)} | \approx \max_i | S_i(\omega) - S_0(\omega) |$
+XXX
 
 #### ERP vs DRP
+XXX
 
 ### References
+
+1. $H_2/H_∞$ Active Control of Sound in a Headrest: Design and Implementation, Boaz Rafaely, Stephen J. Elliott
+2. Feedback Controller Optimization for Active Noise Control Headphones Considering Frequency Response Mismatch between Microphone and Human Ear, Fengyan An, Qianqian Wu, Bilong Liu
+3. Lightweight and Interpretable Neural Modeling of an Audio Distortion Effect Using Hyperconditioned Differentiable Biquads, Shahan Nercessian, Andy Sarroff, Kurt James Werner
