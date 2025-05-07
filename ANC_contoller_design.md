@@ -7,20 +7,20 @@ We consider a task of designing an ANC system for **headphones**.
 <img src="images/earphone_anc.png" width="300">
 
 
-According to the control structure, controllers can be categorized into the *feedforward* (FF) and *feedback* (FB) ones. The former one uses the signal from the reference microphone, while the latter one relies on the error signal coming from the error microphone. If an ANC system includes both controllers, it is usually called a *hybrid* system.
+According to the control structure, controllers can be categorized into the [*feedforward*](https://en.wikipedia.org/wiki/Feed_forward_(control)) (FF) and [*feedback*](https://en.wikipedia.org/wiki/Closed-loop_controller) (FB) ones. The former one uses the signal from the reference microphone, while the latter one relies on the error signal coming from the error microphone. If an ANC system includes both controllers, it is usually called a *hybrid* system.
 
 <img src="images/hybrid_anc.png" width="300">
 
 The controller synthesis problem can be formulated as a constrained optimization problem. 
-The controller is synthesized from a dataset of impulse responses of a headphone system.
+The controller is synthesized from a dataset of measured impulse responses of a headphone system.
 
 #### Controller representation
 
-Typically, ANC systems use a linear, time-invariant or adaptive, digital filter with a *finite impulse response* (FIR) or an *infinite impulse response* (IIR).
+Typically, ANC systems use a linear, time-invariant or adaptive, digital filter with a [*finite impulse response*](https://en.wikipedia.org/wiki/Finite_impulse_response) (FIR) or an [*infinite impulse response*](https://en.wikipedia.org/wiki/Infinite_impulse_response) (IIR).
 
 Compared to analog controllers, one problem of a digital controller is that an extra delay is introduced. Also, in the case of headphones, the distance between the reference microphone and the speaker does not exceed 1-1.5 cm. Both problems motivate using higher sampling frequency to reduce the latency, but it comes with the cost of increased computational burden, making the use of FIR based controllers impractical.
 
-This problem could be alleviated with the usages of *warped FIR* filters or cascades of *biquad* filters (2nd order IIR), the latter of which is particularly advantageous for commercial products since the controller cost could be greatly lowered and the battery lifetime could also be lengthened.
+This problem could be alleviated with the usages of [*warped FIR*](https://www2.spsc.tugraz.at/people/franklyn/ICASSP97/pdf/scan/ic972205.pdf) filters or cascades of [*biquad*](https://en.wikipedia.org/wiki/Digital_biquad_filter) filters (2nd order IIR), the latter of which is particularly advantageous for commercial products since the controller cost could be greatly lowered and the battery lifetime could also be lengthened.
 
 The biggest advantage of an IIR based controller is its reduced computational complexity. Each biquad filter only needs 5 multiplications and 4 additions per sample to calculate its output, and the total number of multiplications or additions is less than 100. This is several orders of magnitude less than for FIR based controllers. 
 
@@ -32,6 +32,8 @@ Based on this reduced computational complexity, the sampling frequency could be 
 
 XXX general structure XXX
 
+...<u>work in progress</u>!
+
 ERP - error reference point
 DRP - drum reference point
 PP - primary path
@@ -41,6 +43,7 @@ FB - feedback controller
 
 Traditionally, an ANC system is tuned to produce optimum noise cancellation at the location of the error microphone, also called as the *error reference point* (ERP). This is because most of the ANC systems rely upon monitoring the cancelled signal to work. To maximize noise cancellation, an ideal placement of an error microphone would be at the eardrum. This point is often referred to as the *drum reference point* (DRP) . But that location is not practical or possible for many consumer devices. Thus, the ERP is used to provide a practical signal that is roughly indicative of the cancellation performance at the DRP, especially for lower frequencies (< 1 kHz). Also, sometimes it is considered acceptable to ignore any differences in noise cancellation between the ERP and the DRP.
 
+...<u>work in progress</u>!
 
 ++++++++++++++++++++++
 
@@ -49,40 +52,40 @@ $$ H = \frac{\sum_k P_k \Delta_k}{\Delta} $$
  that models the system's output $Y$ given the input $X$.
 
 
-Graph determinant: $\Delta = 1 + FB \cdot SP_{ERP}$
+Graph determinant: $\Delta = 1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}$
 
 Paths and co-factors: 
-- $P_1 = G_{DRP}$, $\Delta_1 = 1 + FB \cdot SP_{ERP}$
-- $P_2 = G_{REF} \cdot FF \cdot SP_{DRP}$, $\Delta_2 = 1$
-- $P_3 = -G_{ERP} \cdot FB \cdot SP_{DRP}$, $\Delta_3 = 1$
+- $P_1 = G_\text{DRP}$, $\Delta_1 = 1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}$
+- $P_2 = G_\text{REF} \cdot \mathrm{FF} \cdot \mathrm{SP}_\text{DRP}$, $\Delta_2 = 1$
+- $P_3 = -G_\text{ERP} \cdot \mathrm{FB} \cdot \mathrm{SP}_\text{DRP}$, $\Delta_3 = 1$
 
 
 Transfer function: 
 $$
 \begin{align}
-H = \frac{Y}{X} = G_{DRP} + \frac{G_{REF} \cdot FF \cdot SP_{DRP} - G_{ERP} \cdot FB \cdot SP_{DRP}}{1 + FB \cdot SP_{ERP}} \\ 
-= \frac{G_{DRP} + G_{REF} \cdot FF \cdot SP_{DRP} + G_{DRP} \cdot FB \cdot SP_{ERP} - G_{ERP} \cdot FB \cdot SP_{DRP}} {1 + FB \cdot SP_{ERP}} \\
-= \frac{G_{DRP} + G_{REF} \cdot FF \cdot SP_{DRP} + FB \cdot (G_{DRP} \cdot SP_{ERP} - G_{ERP} \cdot SP_{DRP})} {1 + FB \cdot SP_{ERP}} \\
-= \frac{G_{DRP} + G_{REF} \cdot FF \cdot SP_{DRP} + FB \cdot G_{DRP} \cdot SP_{ERP} \cdot (1 - \frac{G_{ERP} \cdot SP_{DRP}}{G_{DRP} \cdot SP_{ERP}})} {1 + FB \cdot SP_{ERP}} \\
+H = \frac{Y}{X} = G_\text{DRP} + \frac{G_\text{REF} \cdot \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} - G_\text{ERP} \cdot \mathrm{FB} \cdot \mathrm{SP}_\text{DRP}}{1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}} \\ 
+= \frac{G_\text{DRP} + G_\text{REF} \cdot \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} + G_\text{DRP} \cdot \mathrm{FB} \cdot \mathrm{SP}_\text{ERP} - G_\text{ERP} \cdot \mathrm{FB} \cdot \mathrm{SP}_\text{DRP}} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}} \\
+= \frac{G_\text{DRP} + G_\text{REF} \cdot \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} + \mathrm{FB} \cdot (G_\text{DRP} \cdot \mathrm{SP}_\text{ERP} - G_\text{ERP} \cdot \mathrm{SP}_\text{DRP})} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}} \\
+= \frac{G_\text{DRP} + G_\text{REF} \cdot \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} + \mathrm{FB} \cdot G_\text{DRP} \cdot \mathrm{SP}_\text{ERP} \cdot (1 - \frac{G_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{G_\text{DRP} \cdot \mathrm{SP}_\text{ERP}})} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}} \\
 \end{align}
 $$
 
 
-Introducing $PP_{ERP} = \frac{G_{ERP}}{G_{REF}}$, $PP_{DRP} = \frac{G_{DRP}}{G_{REF}}$ and $\Delta = \frac{G_{ERP} \cdot SP_{DRP}}{G_{DRP} \cdot SP_{ERP}} = \frac{PP_{ERP} \cdot SP_{DRP}}{PP_{DRP} \cdot SP_{ERP}}$, the transfer function can be rewritten as:
+Introducing $\mathrm{PP}_\text{ERP} = \frac{G_\text{ERP}}{G_\text{REF}}$, $\mathrm{PP}_\text{DRP} = \frac{G_\text{DRP}}{G_\text{REF}}$ and $\Delta = \frac{G_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{G_\text{DRP} \cdot \mathrm{SP}_\text{ERP}} = \frac{\mathrm{PP}_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{\mathrm{PP}_\text{DRP} \cdot \mathrm{SP}_\text{ERP}}$, the transfer function can be rewritten as:
 $$
-\frac{Y}{G_{REF}X} = \frac{PP_{DRP} + FF \cdot SP_{DRP} + FB \cdot PP_{DRP} \cdot SP_{ERP} \cdot (1 - \Delta)} {1 + FB \cdot SP_{ERP}}
+\frac{Y}{G_\text{REF}X} = \frac{\mathrm{PP}_\text{DRP} + \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} + \mathrm{FB} \cdot \mathrm{PP}_\text{DRP} \cdot \mathrm{SP}_\text{ERP} \cdot (1 - \Delta)} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}}
 $$
 
-Given this transfer function, one can can define the *sensitivity function* for a whole system - ratio of noise with ANC ON and ANC OFF:
+Given this transfer function, one can can define the [*sensitivity function*](https://en.wikipedia.org/wiki/Sensitivity_(control_systems)) for a whole system - ratio of noise with ANC ON and ANC OFF:
 $$
-S = \frac{H}{G_{DRP}} = \frac{1 + \frac{SP_{DRP}}{PP_{DRP}} \cdot FF + FB \cdot SP_{ERP} \cdot (1 - \Delta)} {1 + FB \cdot SP_{ERP}}
+S = \frac{H}{G_\text{DRP}} = \frac{1 + \frac{\mathrm{SP}_\text{DRP}}{\mathrm{PP}_\text{DRP}} \cdot \mathrm{FF} + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP} \cdot (1 - \Delta)} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}}
 $$
 
 Let us assume that ${ERP} \equiv {DRP}$ for now. This simplifies the sensitivity function by eliminating ${FB}$ from the numerator:
 $$
-S = \frac{1 + \frac{SP_{ERP}}{PP_{ERP}} \cdot FF} {1 + FB \cdot SP_{ERP}}
+S = \frac{1 + \frac{\mathrm{SP}_\text{ERP}}{\mathrm{PP}_\text{ERP}} \cdot \mathrm{FF}} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}}
 $$
-Under this assumption, design of a hybrid ANC controller, - minimization of the sensitivity function $S$ wrt to $FF$ and $FB$, - decouples into two independent optimization problems. Next sections present detailed discussion about the controller design.
+Under this assumption, design of a hybrid ANC controller, - minimization of the sensitivity function $S$ wrt to $\mathrm{FF}$ and $\mathrm{FB}$, - decouples into two independent optimization problems. Next sections present detailed discussion about the controller design.
 
 
 ### Feedback controller design
@@ -90,7 +93,7 @@ Under this assumption, design of a hybrid ANC controller, - minimization of the 
 Let consider a feedback control system with linear time-invariant stable plant $P$, defined by its frequency response.
 
 The objective is to synthesize a linear time-invariant controller $K$ that achieves good noise attenuation within the control bandwidth.
-This can be achieved by minimizing the *sensitivity function*, *i.e.*, the *closed-loop* transfer function:
+This can be achieved by minimizing the *sensitivity function*, *i.e.*, the [*closed-loop*](https://en.wikipedia.org/wiki/Closed-loop_transfer_function) transfer function:
 %% S = \frac{E}{D} = %%
 $$ S = \frac{1}{1 + K \cdot P} = \frac{1}{1 + L} $$ 
 In the case of feedback ANC, the plant is $P$ is given by the measured secondary path response(s). Here, $L$ denotes the *open-loop* transfer function. 
@@ -109,14 +112,11 @@ Below in an illustration of weighting functions used for FF and FB controllers d
 
 #### Controller representation
 
-In [1] a method for designing an ANC controller represented as a FIR filter was proposed. The coefficients of the filter were found by solving a *convex optimization* problem. Despite convenience of the problem formulation and uniqueness of a solution, practical implementations of FIR controllers are usually restricted by their computational complexity. Therefore, IIR filters are usually preferred for implementing ANC controllers. Also, a cascade of 5-10 biquad filters can approximate a prescribed frequency response with reasonable accuracy, required for building a competitive ANC system. Here, **cascades of biquad filters** are used as the feedback and feedforward controllers, which is in accordance with the most commercial ANC headphones currently available on the market (2024). 
+In [^1] a method for designing an ANC controller represented as a FIR filter was proposed. The coefficients of the filter were found by solving a *convex optimization* problem. Despite convenience of the problem formulation and uniqueness of a solution, practical implementations of FIR controllers are usually restricted by their computational complexity. Therefore, IIR filters are usually preferred for implementing ANC controllers. Also, a cascade of 5-10 biquad filters can approximate a prescribed frequency response with reasonable accuracy, required for building a competitive ANC system. Here, **cascades of biquad filters** are used as the feedback and feedforward controllers, which is in accordance with the most commercial ANC headphones currently available on the market (2024). 
 
 ##### Filter parameterization
 
-Instead of the general form represented with poles and zeros, several kinds of parametric biquad filters are considered here. See [3] for details.
-
-%% The corresponding transfer functions can be written as follows: %%
-
+Instead of the general form represented with poles and zeros, several kinds of parametric biquad filters are considered here. See [^2] for details.
 
 
 #### Stability constraints
@@ -126,7 +126,7 @@ In practice, it is not enough that a system is stable. There must be some margin
 - **Gain margin** (GM) is a factor by which the gain of a stable system is allowed to increase before the system becomes unstable. It is the inverse of the distance between the origin and the point between $-1$ and $0$ where the Nyquist curve crosses the real axis.
 - **Phase margin** (PM) is the amount of phase lag that a system can tolerate before becoming unstable. It is defined as the difference between $-180$ degrees and the phase angle of the open-loop transfer function at the frequency where the magnitude is $1$ ($0$ $\mathrm{dB}$).
 
-The gain margin and phase margins on the Nyquist plot:
+The gain margin and phase margins on the [Nyquist plot](https://en.wikipedia.org/wiki/Nyquist_stability_criterion#Nyquist_plot):
 <img src="images/margins.jpg" width="300">
 
 In a practical situation a phase margin of 45° and a gain margin of 6 dB are often used.
@@ -161,7 +161,11 @@ $$ |L(\omega)| \leq c, \forall \omega \in [\omega_{h}, \infty) $$
 
 #### Performance constraints
 
-According to [Bode's sensitivity integral theorem](https://en.wikipedia.org/wiki/Bode%27s_sensitivity_integral), there is a fundamental trade-off, known as the *waterbed effect*, between decreasing (below unity) the magnitude of the sensitivity function in some frequency regions and getting it increased (above unity) at the other frequency regions. Therefore, to avoid excessive noise amplification ($|S|>1$), some constraint must be included to prevent the magnitude of the sensitivity function of growing too large.
+According to [Bode's sensitivity integral theorem](https://en.wikipedia.org/wiki/Bode%27s_sensitivity_integral), there is a fundamental trade-off, known as the [*waterbed effect*](https://flyingv.ucsd.edu/krstic/teaching/143b/GSBode.pdf), between decreasing (below unity) the magnitude of the sensitivity function in some frequency regions and getting it increased (above unity) at the other frequency regions. 
+
+<img src="images/digger.png" width="400">
+
+Therefore, to avoid excessive noise amplification ($|S|>1$), some constraint must be included to prevent the magnitude of the sensitivity function of growing too large.
 $$ |1 + L(\omega)| \geq b, \forall \omega \in [0, \infty) $$
 This constraint defines a circular region with a radius $b$ centered at $(-1, 0)$. This bound ensures that the magnitude of the sensitivity function is below $b^{-1}$ and provides the following stability margins:
 
@@ -178,7 +182,7 @@ $$
 
 In summary, given the frequency response of the plant (secondary path), a feedback controller can be designed by solving a constrained optimization problem. The problem includes the objective function defined by magnitude of the weighed sensitivity function, and the constraints outlined before.
 
-Due to discretization, the number of frequency points used in the calculations should be large enough to ensure that the values of $L(\omega)$ between two frequency points are still outside the forbidden region.
+Due to discretization, the number of frequency points used in the calculations should be large enough to ensure that the values of $L(\omega)$ between two frequency points are still outside the forbidden region. To address this issue and also to reduce computational complexity, we used non-uniformly discretized spectra, similar to [^3].
 
 #### Solver
 
@@ -186,20 +190,41 @@ The optimization problem described above is highly non-convex since the controll
 
 Consequently, [metaheuristics](https://en.wikipedia.org/wiki/Metaheuristic) are often used for solving such problems. These algorithms aim to find a global (rather than local) optimum, and although they have no guarantee of good performance, they been found to perform acceptably in many use cases. Examples of such algorithms include evolutionary algorithms, particle swarm optimization, etc.
 
-To use off-the-shelf metaheuristics available in open-source Python packages, the original optimization problem should be formulated as an unconstrained problem similar to [2].
+To use off-the-shelf metaheuristics available in open-source Python packages, the original optimization problem should be formulated as an unconstrained problem.
 
 ### Feedforward controller design
 
 Designing a feedforward ANC controller is technically similar to designing a feedback controller. In both cases one needs to minimize the following function (of its weighed version) wrt to either $FF$ or $FB$ parameters:
 $$
-S = \frac{1 + \frac{SP_{ERP}}{PP_{ERP}} \cdot FF} {1 + FB \cdot SP_{ERP}}
+S = \frac{1 + \frac{\mathrm{SP}_\text{ERP}}{\mathrm{PP}_\text{ERP}} \cdot FF} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}}
 $$
 However, in the case of FF ANC, the problem is unconstrained because feedforward controllers are always stable.
 
+### Dataset
+
+We used the data from the [PANDAR](https://www.iks.rwth-aachen.de/en/research/tools-downloads/databases/paths-for-active-noise-cancellation-development-and-research/) database of acoustic paths [^4], which provides impulse responses measured for multiple persons equipped with a Bose QC20 in-ear headphone.
+
+<img src="images/BoseQC20.jpg" width="400">
+
+See https://www.bose.com/pressroom/bose-quietcomfort-20-acoustic-noise-cancelling-headphones for details.
 
 ### Results
 
-Given the synthesized controllers, one can estimate ANC performance using a pair of audio recordings from the reference and the error mics. Below is a result of running ANC system simulation.
+First, let's verify stability of the resulting feedback controller.
+
+Assessment of the stability of a closed-loop negative feedback system is done by applying the Nyquist stability criterion to the Nyquist plot of the open-loop system (*i.e.* the same system without its feedback loop). A Nyquist plot is a parametric plot of a frequency response. In Cartesian coordinates, the real part of the transfer function is plotted on the x-axis while the imaginary part is plotted on the y-axis. The frequency is swept as a parameter, resulting in one point per frequency.  To determine closed-loop stability, the plot is analyzed for encirclements of the critical point $-1+0i$.
+
+The Nyquist plot of the open-loop transfer function corresponding to the obtained feedback controller:
+
+<img src="images/nyquist_plot.png" width="500">
+
+The Nyquist curve, shown as a dotted line, does not penetrate the forbidden region (black) assuring that the system is stable.
+
+Next, given the synthesized controllers, one can estimate the performance of the resulting ANC system using a pair of audio recordings from the reference and the error mics. The ANC performance is expressed in terms of the *relative noise attenuation* (RA) - a ratio of the power spectral density (PSD) of the error microphone signal with an ANC system turned *on* to the same PSD with ANC turned *off*. 
+
+$$ \mathrm{RA}(\mathrm{dB}) = 10 \log_{10} \frac{\mathrm{PSD}_\text{on}}{\mathrm{PSD}_\text{off}} $$
+
+The [Welch method](https://en.wikipedia.org/wiki/Welch%27s_method) was used for estimating PSDs. Below is a result of running ANC system simulation.
 
 <img src="images/attenuation.png" width="600">
 
@@ -209,9 +234,17 @@ Here, the curve labeled as FF+FB corresponds to the hybrid system, while the oth
 ### ANC controller design issues
 
 #### Plant uncertainty
+
+The resulting ANC system depends on the secondary path and the primary path measurements. Both the secondary path and the primary path can vary according to the placement of the earpiece in the ear, the shape of the ear canal, the level of leakage, etc. The figure below shows variations of the secondary path responses estimated from different persons and a dummy head[^4].
+
+<img src="images/QC20-SP.png" width="400">
+
+In order to obtain a robust system, uncertainties of the plant (secondary path) need to be considered. The multiplicative uncertainty model is a common choice. It describes the plant by means of a multiplicative deviation from a nominal path [^5][^6][^7].
+
 Multiplicative uncertainty model:
 
 $S(\omega) = S_0(\omega)(1 + W(\omega) \cdot \Delta(\omega))$
+
 Here, $\Delta$ is a subset of complex numbers that fulfills the condition $|\Delta(\omega)| \leq 1, \forall \omega$.
 
 $W(\omega) = \max_i | \frac{S_i(\omega) - S_0(\omega)}{S_0(\omega)} |$
@@ -219,13 +252,24 @@ $W(\omega) = \max_i | \frac{S_i(\omega) - S_0(\omega)}{S_0(\omega)} |$
 $S(\omega) = S_0(\omega)(1 + W(\omega) \cdot \Delta(\omega)) = S_0(\omega) + r\cdot\Delta(\omega)$
 
 $r = S_0(\omega) \max_i | \frac{S_i(\omega) - S_0(\omega)}{S_0(\omega)} | \approx \max_i | S_i(\omega) - S_0(\omega) |$
-XXX
+
+...<u>work in progress</u>!
 
 #### ERP vs DRP
-XXX
+
+In the discussion above the ANC performance was generally evaluated at the error microphone location, aka the error reference point (ERP).
+However, the residual error signal at the ERP might be different from the one perceived by the human ear at the eardrum, aka the drum reference point  (DRP).
+There are studies, where the ERP vs. DRP mismatch is addressed for an ANC system design [^8].
+
+...<u>work in progress</u>!
 
 ### References
 
-1. $H_2/H_∞$ Active Control of Sound in a Headrest: Design and Implementation, Boaz Rafaely, Stephen J. Elliott
-2. Feedback Controller Optimization for Active Noise Control Headphones Considering Frequency Response Mismatch between Microphone and Human Ear, Fengyan An, Qianqian Wu, Bilong Liu
-3. Lightweight and Interpretable Neural Modeling of an Audio Distortion Effect Using Hyperconditioned Differentiable Biquads, Shahan Nercessian, Andy Sarroff, Kurt James Werner
+[^1]: $H_2/H_∞$ Active Control of Sound in a Headrest: Design and Implementation, Boaz Rafaely, Stephen J. Elliott
+[^2]: Lightweight and Interpretable Neural Modeling of an Audio Distortion Effect Using Hyperconditioned Differentiable Biquads, Shahan Nercessian, Andy Sarroff, Kurt James Werner
+[^3]: Filter Synthesis for Robust Feedback Active Noise Control using Non-Uniformly Discretized Fourier Spectra, Willem Alexander Klatt , Michael Burger, Rainer Martin, Henning Puder
+[^4]: Acoustic Path Database for ANC In-Ear Headphone Development, Stefan Liebich, Johannes Fabry,  Peter Jax, Peter Vary
+[^5]: Uncertainty Constraint on Headphone Secondary Path Function for Designing Cascade Biquad Feedback Controller with Improved Noise Reduction Performance, Yang Hua, Linhui Peng
+[^6]: Psychoacoustic Optimization of a Feedback Controller for Active Noise Cancelling Headphones, Roman Schlieper; Song Li; Stephan Preihs; Jürgen Peissig
+[^7]: Control filter design with convex-set-based uncertainty model for robust feedback active noise control, Willem Alexander Klatt, Rainer Martin
+[^8]: Feedback Controller Optimization for Active Noise Control Headphones Considering Frequency Response Mismatch between Microphone and Human Ear, Fengyan An, Qianqian Wu, Bilong Liu
