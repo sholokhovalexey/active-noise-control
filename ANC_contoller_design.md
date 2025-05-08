@@ -75,7 +75,10 @@ H = \frac{Y_\text{DRP}}{X} = G_\text{DRP} + \frac{G_\text{REF} \cdot \mathrm{FF}
 
 
 Introducing the *primary path* (PP) responses as 
-$\mathrm{PP}_\text{ERP} = \frac{G_\text{ERP}}{G_\text{REF}}$, $\mathrm{PP}_\text{DRP} = \frac{G_\text{DRP}}{G_\text{REF}}$ and $\Delta = \frac{G_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{G_\text{DRP} \cdot \mathrm{SP}_\text{ERP}} = \frac{\mathrm{PP}_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{\mathrm{PP}_\text{DRP} \cdot \mathrm{SP}_\text{ERP}}$
+- $\mathrm{PP}_\text{ERP} = \frac{G_\text{ERP}}{G_\text{REF}}$
+- $\mathrm{PP}_\text{DRP} = \frac{G_\text{DRP}}{G_\text{REF}}$
+- $\Delta = \frac{G_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{G_\text{DRP} \cdot \mathrm{SP}_\text{ERP}} = \frac{\mathrm{PP}_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{\mathrm{PP}_\text{DRP} \cdot \mathrm{SP}_\text{ERP}}$
+
 the transfer function can be rewritten as:
 ```math
 \frac{Y_\text{DRP}}{G_\text{REF} \cdot X} = \frac{\mathrm{PP}_\text{DRP} + \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} + \mathrm{FB} \cdot \mathrm{PP}_\text{DRP} \cdot \mathrm{SP}_\text{ERP} \cdot (1 - \Delta)} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}}
