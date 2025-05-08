@@ -50,7 +50,7 @@ Traditionally, an ANC system is tuned to produce optimum noise cancellation at t
 
 Using [Mason's gain formula](https://en.wikipedia.org/wiki/Mason%27s_gain_formula), one can derive the transfer function:
 
-$ H = \frac{\sum_k P_k \Delta_k}{\Delta} $
+$H = \frac{\sum_k P_k \Delta_k}{\Delta}$
 
 that models the system's output $Y$ given the input $X$.
 
