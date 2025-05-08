@@ -27,7 +27,7 @@ Based on this reduced computational complexity, the sampling frequency could be 
 
 #### ANC system structure
 
-To derive the transfer function of a hybrid ANC system, let us represent it as a signal flow graph:
+To derive the [transfer function](https://en.wikipedia.org/wiki/Transfer_function) of a hybrid ANC system, let us represent it as a signal flow graph:
 
 <center><img src="images/anc_drp.png" width="400"></center>
 
@@ -43,9 +43,15 @@ List of abbreviations:
 |FF|Feedforward controller|
 |FB|Feedback controller|
 
+Design of ANC systems requires measurements on the plant to be controlled. In active vibration and noise control the plant to be controlled is an electro-acoustic plant, also referred to as the *secondary path* (SP). The secondary path is the transfer function between the ANC output and the error microphone output.
+
+<center><img src="images/SP.png" width="600"></center>
+
+It combines the properties of the digital-analog (D/A) and analog-digital (A/D) converters, analog filters, power amplifier, loudspeaker, microphone and the acoustic path between the secondary loudspeaker and error microphone.
+
 Traditionally, an ANC system is tuned to produce optimum noise cancellation at the location of the error microphone, also called the *error reference point* (ERP). This is because most of the ANC systems rely upon monitoring the cancelled signal to work. To maximize noise cancellation, an ideal placement of an error microphone would be at the eardrum. This point is often referred to as the *drum reference point* (DRP). But that location is not practical or possible for many consumer devices. Thus, the ERP is used to provide a signal that is roughly indicative of the cancellation performance at the DRP, especially for lower frequencies (< 1 kHz). Also, sometimes it is considered acceptable to ignore any differences in noise cancellation between the ERP and the DRP.
 
-Using [Mason's gain formula](https://en.wikipedia.org/wiki/Mason%27s_gain_formula), one can derive the [transfer function](https://en.wikipedia.org/wiki/Transfer_function):
+Using [Mason's gain formula](https://en.wikipedia.org/wiki/Mason%27s_gain_formula), one can derive the transfer function:
 
 $H = \frac{\sum_k P_k \Delta_k}{\Delta}$
 
