@@ -25,10 +25,9 @@ The biggest advantage of an IIR based controller is its reduced computational co
 Based on this reduced computational complexity, the sampling frequency could be greatly increased up to are 192 kHz or 384 kHz (typical values in commercial chips) so that a much smaller controller delay could be obtained. Consequently, a better noise reduction performance could be expected due to enhanced system causality.
 
 
-
 #### ANC system structure
 
-To derive the transfer function of a hybrid ANC system, let's represent it as a signal flow graph:
+To derive the transfer function of a hybrid ANC system, let us represent it as a signal flow graph:
 
 <center><img src="images/anc_drp.png" width="400"></center>
 
@@ -44,8 +43,6 @@ List of abbreviations:
 |FF|Feedforward controller|
 |FB|Feedback controller|
 
-
-
 Traditionally, an ANC system is tuned to produce optimum noise cancellation at the location of the error microphone, also called as the *error reference point* (ERP). This is because most of the ANC systems rely upon monitoring the cancelled signal to work. To maximize noise cancellation, an ideal placement of an error microphone would be at the eardrum. This point is often referred to as the *drum reference point* (DRP). But that location is not practical or possible for many consumer devices. Thus, the ERP is used to provide a signal that is roughly indicative of the cancellation performance at the DRP, especially for lower frequencies (< 1 kHz). Also, sometimes it is considered acceptable to ignore any differences in noise cancellation between the ERP and the DRP.
 
 Using [Mason's gain formula](https://en.wikipedia.org/wiki/Mason%27s_gain_formula), one can derive the [transfer function](https://en.wikipedia.org/wiki/Transfer_function):
@@ -53,7 +50,6 @@ Using [Mason's gain formula](https://en.wikipedia.org/wiki/Mason%27s_gain_formul
 $H = \frac{\sum_k P_k \Delta_k}{\Delta}$
 
 that models the system's output $Y$ given the input $X$.
-
 
 Graph determinant: $\Delta = 1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}$
 
@@ -72,7 +68,6 @@ H = \frac{Y_\text{DRP}}{X} = G_\text{DRP} + \frac{G_\text{REF} \cdot \mathrm{FF}
 = \frac{G_\text{DRP} + G_\text{REF} \cdot \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} + \mathrm{FB} \cdot G_\text{DRP} \cdot \mathrm{SP}_\text{ERP} \cdot (1 - \frac{G_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{G_\text{DRP} \cdot \mathrm{SP}_\text{ERP}})} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}} \\
 \end{aligned}
 ```
-
 
 Introducing the *primary path* (PP) responses as 
 ```math
@@ -113,13 +108,13 @@ S = \frac{1}{1 + H \cdot G} = \frac{1}{1 + L}
 ```
 In the case of feedback ANC, the plant is $G$ is given by the measured secondary path response(s). Here, $L = H \cdot G$ denotes the *open-loop* transfer function. 
 
-The design goal of minimizing the sensitivity function translates to making its magnitude, $∣S∣$, as small as possible over the target frequency range where noise attenuation is desired.
+The design goal of minimizing the sensitivity function translates to making its magnitude, $|S|$, as small as possible over the target frequency range where noise attenuation is desired.
 
 Beyond performance, the sensitivity function is intimately linked to system robustness. The peak magnitude of the sensitivity function, is a widely used indicator of robustness to variations or uncertainties in the plant model. Smaller values (typically constrained to be less than 6 dB) signify a more robust system.
 
 Also, the sensitivity function characterizes the so-called *waterbed effect* (see below), a fundamental constraint in feedback control systems, including ANC. This phenomenon dictates that efforts to suppress the sensitivity function (attenuate noise) in one frequency band **inevitably** lead to an increase in its magnitude (noise amplification) in other frequency bands. Therefore, the design process must carefully balance the desired level of noise attenuation within the control bandwidth against acceptable levels of noise amplification outside this band.
 
-In summary, the optimization problem for ANC controller synthesis effectively seeks an optimal shape for $∣S∣$ that balances these interconnected and conflicting requirements of performance, robustness, and limited out-of-band amplification.
+In summary, the optimization problem for ANC controller synthesis effectively seeks an optimal shape for $|S|$ that balances these interconnected and conflicting requirements of performance, robustness, and limited out-of-band amplification.
 
 
 
@@ -190,7 +185,6 @@ Finally, physical systems generally have some high frequency plant uncertainty. 
 |L(\omega)| \leq c, \forall \omega \in [\omega_{h}, \infty)
 ```
 
-
 #### Performance constraints
 
 According to [Bode's sensitivity integral theorem](https://en.wikipedia.org/wiki/Bode%27s_sensitivity_integral), there is a fundamental trade-off, known as the [*waterbed effect*](https://flyingv.ucsd.edu/krstic/teaching/143b/GSBode.pdf), between decreasing (below unity) the magnitude of the sensitivity function in some frequency regions and getting it increased (above unity) at the other frequency regions. 
@@ -214,10 +208,19 @@ This constraint defines a circular region with a radius $b$ centered at $(-1, 0)
 
 #### Problem formulation
 
-In summary, given the frequency response of the plant (secondary path), a feedback controller can be designed by solving a constrained optimization problem defined in the frequency domain. The problem includes the objective function defined by magnitude of the weighed sensitivity function, and the constraints outlined before.
+In summary, given the frequency response of the plant (secondary path), a feedback controller can be designed by solving a constrained optimization problem defined in the frequency domain. The problem includes the objective function defined by magnitude of the weighed sensitivity function, and the constraints outlined before. The problem is solved wrt the controller paramters $\boldsymbol{\theta}$:
+```math
+\begin{aligned}
+\min_{\boldsymbol{\theta}} \quad &  \|W(\omega) S(\omega; \boldsymbol{\theta})\|^2_2 \\
+\text{s.t.} \quad & |1 - L(\omega; \boldsymbol{\theta})| - |1 + L(\omega; \boldsymbol{\theta})| \leq 2a, \forall \omega \in [0, \infty) \\
+                  & |1 + L(\omega; \boldsymbol{\theta})| \geq b, \forall \omega \in [0, \infty)    \\
+                  & |L(\omega; \boldsymbol{\theta})| \leq c, \forall \omega \in [\omega_{h}, \infty) \\
+\end{aligned}
+```
+Since continuous frequency responses cannot be directly handled by numerical optimization algorithms, they must be discretized. This involves evaluating the SP response, the controller response, and the weighting function at a finite set of discrete frequency points $\omega$. The objective function and all frequency-dependent constraints are then formulated based on these points. 
 
-Since continuous frequency responses cannot be directly handled by numerical optimization algorithms, they must be discretized. This involves evaluating the SP response, the controller response, and the weighting function at a finite set of discrete frequency points​. The objective function and all frequency-dependent constraints are then formulated based on these​ points. 
-A critical aspect of this discretization is ensuring that the behavior of the system between these sample points remains acceptable. The number of frequency points, $N$, must be sufficiently large to adequately capture the variations in the frequency responses and to prevent undesirable phenomena. If it​ is too small, the controller might satisfy all criteria at the selected discrete points​, but exhibit poor performance or even instability due to large, undetected peaks or phase shifts in the sensitivity function or loop transfer function occurring between these points. However, increasing $N$, to improve the resolution of the frequency response comes at the cost of increased computational complexity. Each iteration of the optimization algorithm requires the evaluation of the objective function and all relevant constraints at each of the $N$ frequency points. For complex controllers or a large number of constraints, this can lead to prohibitively long optimization times.
+A critical aspect of this discretization is ensuring that the behavior of the system between these sample points remains acceptable. The number of frequency points, $N$, must be sufficiently large to adequately capture the variations in the frequency responses and to prevent undesirable phenomena. If it is too small, the controller might satisfy all criteria at the selected discrete points, but exhibit poor performance or even instability due to large, undetected peaks or phase shifts in the sensitivity function or loop transfer function occurring between these points. However, increasing $N$, to improve the resolution of the frequency response comes at the cost of increased computational complexity. Each iteration of the optimization algorithm requires the evaluation of the objective function and all relevant constraints at each of the $N$ frequency points. For complex controllers or a large number of constraints, this can lead to prohibitively long optimization times.
+
 To mitigate this trade-off between accuracy and computational burden, non-uniformly discretized spectra offer a promising approach [^3]. Instead of a uniform spacing of frequency points, this technique employs a variable density of points. More points are allocated to frequency regions deemed critical for the ANC system's performance or stability, while fewer points are used in less critical regions.
 
 #### Solver
@@ -227,6 +230,7 @@ The optimization problem described above is highly non-convex since the controll
 Consequently, [metaheuristics](https://en.wikipedia.org/wiki/Metaheuristic) are often used for solving such problems. These algorithms aim to find a global (rather than local) optimum, and although they have no guarantee of good performance, they been found to perform acceptably in many use cases. Examples of such algorithms include evolutionary algorithms, particle swarm optimization, etc.
 
 To use off-the-shelf metaheuristics available in open-source Python packages, the original optimization problem should be formulated as an unconstrained problem.
+
 
 ### Feedforward controller design
 
@@ -244,6 +248,7 @@ S = \frac{1 + \frac{\mathrm{SP}_\text{ERP}}{\mathrm{PP}_\text{ERP}} \cdot \mathr
 ```
 However, in the case of FF ANC, the problem is usually unconstrained because the stability constraints are not required.
 
+
 ### Dataset
 
 We used the data from the [PANDAR](https://www.iks.rwth-aachen.de/en/research/tools-downloads/databases/paths-for-active-noise-cancellation-development-and-research/) database of acoustic paths [^4], which provides impulse responses measured for multiple persons equipped with a Bose QC20 in-ear headphone.
@@ -252,9 +257,10 @@ We used the data from the [PANDAR](https://www.iks.rwth-aachen.de/en/research/to
 
 See https://www.bose.com/pressroom/bose-quietcomfort-20-acoustic-noise-cancelling-headphones for details.
 
+
 ### Results
 
-First, let's verify stability of the resulting feedback controller.
+First, let us verify stability of the resulting feedback controller.
 
 Assessment of the stability of a closed-loop negative feedback system is done by applying the Nyquist stability criterion to the Nyquist plot of the open-loop system (*i.e.* the same system without its feedback loop). A Nyquist plot is a parametric plot of a frequency response. In Cartesian coordinates, the real part of the transfer function is plotted on the x-axis while the imaginary part is plotted on the y-axis. The frequency is swept as a parameter, resulting in one point per frequency.  To determine closed-loop stability, the plot is analyzed for encirclements of the critical point $-1+0i$.
 
@@ -272,7 +278,7 @@ Assuming that the system behaves linearly, the ratio of these PSDs is approximat
 ```math
 \mathrm{RA}(\mathrm{dB}) = 10 \log_{10} \frac{\mathrm{PSD}_\text{on}}{\mathrm{PSD}_\text{off}} \approx 10 \log_{10} |S|^2
 ```
-Any significant discrepancies between the $∣S∣$ predicted by the optimization process and the experimentally measured RA can point to inaccuracies in the SP model used for design, unmodeled non-linearities, or limitations imposed by the controller's implementation (*e.g.*, quantization effects, processing delay).
+Any significant discrepancies between the $|S|$ predicted by the optimization process and the experimentally measured RA can point to inaccuracies in the SP model used for design, unmodeled non-linearities, or limitations imposed by the controller's implementation (*e.g.*, quantization effects, processing delay).
 
 Below is a result of running ANC system simulation.
 
@@ -286,7 +292,6 @@ Here, the curve labeled as FF+FB corresponds to the hybrid system, while the oth
 Ultimately, the synthesis of an effective ANC controller is an iterative process. It often involves meticulous tuning of weighting functions in the objective, careful definition of constraint boundaries, and repeated optimization runs to navigate the complex trade-offs inherent in feedback control.
 
 For practical design of an ANC system, one needs to consider several issues such as the measured data uncertainty and specifics of headphones wearing.
-
 
 #### Plant uncertainty
 
