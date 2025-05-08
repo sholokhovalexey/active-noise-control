@@ -76,7 +76,7 @@ H = \frac{Y_\text{DRP}}{X} = G_\text{DRP} + \frac{G_\text{REF} \cdot \mathrm{FF}
 
 Introducing the *primary path* (PP) responses as 
 ```math
-\mathrm{PP}_\text{ERP} = \frac{G_\text{ERP}}{G_\text{REF}} \\
+\mathrm{PP}_\text{ERP} = \frac{G_\text{ERP}}{G_\text{REF}}, \\
 \mathrm{PP}_\text{DRP} = \frac{G_\text{DRP}}{G_\text{REF}}
 ```
 and
