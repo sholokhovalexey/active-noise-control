@@ -50,7 +50,7 @@ Traditionally, an ANC system is tuned to produce optimum noise cancellation at t
 
 Using [Mason's gain formula](https://en.wikipedia.org/wiki/Mason%27s_gain_formula), one can derive the transfer function:
 
-$H = \frac{\sum_k P_k \Delta_k}{\Delta}$
+$H = \frac{\sum_k \mathrm{P}_k \Delta_k}{\Delta}$
 
 that models the system's output $Y$ given the input $X$.
 
@@ -64,14 +64,12 @@ Paths and co-factors:
 
 
 Transfer function: 
-$
-\begin{aligned}
+$\begin{aligned}
 H = \frac{Y_\text{DRP}}{X} = G_\text{DRP} + \frac{G_\text{REF} \cdot \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} - G_\text{ERP} \cdot \mathrm{FB} \cdot \mathrm{SP}_\text{DRP}}{1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}} \\ 
 = \frac{G_\text{DRP} + G_\text{REF} \cdot \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} + G_\text{DRP} \cdot \mathrm{FB} \cdot \mathrm{SP}_\text{ERP} - G_\text{ERP} \cdot \mathrm{FB} \cdot \mathrm{SP}_\text{DRP}} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}} \\
 = \frac{G_\text{DRP} + G_\text{REF} \cdot \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} + \mathrm{FB} \cdot (G_\text{DRP} \cdot \mathrm{SP}_\text{ERP} - G_\text{ERP} \cdot \mathrm{SP}_\text{DRP})} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}} \\
 = \frac{G_\text{DRP} + G_\text{REF} \cdot \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} + \mathrm{FB} \cdot G_\text{DRP} \cdot \mathrm{SP}_\text{ERP} \cdot (1 - \frac{G_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{G_\text{DRP} \cdot \mathrm{SP}_\text{ERP}})} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}} \\
-\end{aligned}
-$
+\end{aligned}$
 
 
 Introducing the *primary path* (PP) responses as $\mathrm{PP}_\text{ERP} = \frac{G_\text{ERP}}{G_\text{REF}}$, $\mathrm{PP}_\text{DRP} = \frac{G_\text{DRP}}{G_\text{REF}}$ and $\Delta = \frac{G_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{G_\text{DRP} \cdot \mathrm{SP}_\text{ERP}} = \frac{\mathrm{PP}_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{\mathrm{PP}_\text{DRP} \cdot \mathrm{SP}_\text{ERP}}$, the transfer function can be rewritten as:
