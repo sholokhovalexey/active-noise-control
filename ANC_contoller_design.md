@@ -50,7 +50,7 @@ Traditionally, an ANC system is tuned to produce optimum noise cancellation at t
 
 Using [Mason's gain formula](https://en.wikipedia.org/wiki/Mason%27s_gain_formula), one can derive the transfer function:
 
-$H = \frac{\sum_k \text{P}_k \Delta_k}{\Delta}$
+$H = \frac{\sum_k P_k \Delta_k}{\Delta}$
 
 that models the system's output $Y$ given the input $X$.
 
@@ -74,7 +74,9 @@ H = \frac{Y_\text{DRP}}{X} = G_\text{DRP} + \frac{G_\text{REF} \cdot \mathrm{FF}
 ```
 
 
-Introducing the *primary path* (PP) responses as $\mathrm{PP}_\text{ERP} = \frac{G_\text{ERP}}{G_\text{REF}}$, $\mathrm{PP}_\text{DRP} = \frac{G_\text{DRP}}{G_\text{REF}}$ and $\Delta = \frac{G_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{G_\text{DRP} \cdot \mathrm{SP}_\text{ERP}} = \frac{\mathrm{PP}_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{\mathrm{PP}_\text{DRP} \cdot \mathrm{SP}_\text{ERP}}$, the transfer function can be rewritten as:
+Introducing the *primary path* (PP) responses as 
+$\mathrm{PP}_\text{ERP} = \frac{G_\text{ERP}}{G_\text{REF}}$, $\mathrm{PP}_\text{DRP} = \frac{G_\text{DRP}}{G_\text{REF}}$ and $\Delta = \frac{G_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{G_\text{DRP} \cdot \mathrm{SP}_\text{ERP}} = \frac{\mathrm{PP}_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{\mathrm{PP}_\text{DRP} \cdot \mathrm{SP}_\text{ERP}}$
+the transfer function can be rewritten as:
 ```math
 \frac{Y_\text{DRP}}{G_\text{REF} \cdot X} = \frac{\mathrm{PP}_\text{DRP} + \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} + \mathrm{FB} \cdot \mathrm{PP}_\text{DRP} \cdot \mathrm{SP}_\text{ERP} \cdot (1 - \Delta)} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}}
 ```
@@ -256,7 +258,7 @@ Next, given the synthesized controllers, one can assess the noise reduction perf
 
 The *relative attenuation* (RA) is a widely used metric to quantify the performance of an ANC system in the frequency domain. It is a ratio of the power spectral density (PSD) of the error microphone signal with an ANC system turned *on* to the same PSD with ANC turned *off*, typically expressed in decibels (dB). A negative value of RA at a particular frequency indicates that the ANC system is reducing the noise power at that frequency. Conversely, a positive value indicates noise amplification.
 
-Assuming that the system behaves linearly, the ratio of these PSDs is approximately equal to the squared magnitude of the sensitivity function$S$ at the corresponding frequency. 
+Assuming that the system behaves linearly, the ratio of these PSDs is approximately equal to the squared magnitude of the sensitivity function $S$ at the corresponding frequency. 
 ```math
 \mathrm{RA}(\mathrm{dB}) = 10 \log_{10} \frac{\mathrm{PSD}_\text{on}}{\mathrm{PSD}_\text{off}} \approx 10 \log_{10} |S|^2
 ```
@@ -308,7 +310,7 @@ There are studies, where the ERP vs. DRP mismatch is addressed for an ANC system
 
 ### References
 
-[^1]: **Rafaely, B., & Elliott, S. J.**  (1999). *$H_2/H_∞$ Active Control of Sound in a Headrest: Design and Implementation.*
+[^1]: **Rafaely, B., & Elliott, S. J.**  (1999). *$H_2/H_{\infty}$ Active Control of Sound in a Headrest: Design and Implementation.*
 [^2]:  **Nercessian, S., Sarroff, A. M., & Werner, K. J.**  (2021). *Lightweight and Interpretable Neural Modeling of an Audio Distortion Effect Using Hyperconditioned Differentiable Biquads.*
 [^3]:  **Klatt, W. A., Burger, M., Martin, R., & Puder, H.**  (2024). *Filter Synthesis for Robust Feedback Active Noise Control using Non-Uniformly Discretized Fourier Spectra.*
 [^4]: **Liebich, S., Fabry, J., Jax, P., & Vary, P.**  (2019). *Acoustic Path Database for ANC In-Ear Headphone Development.*
