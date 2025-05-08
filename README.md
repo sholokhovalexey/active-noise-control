@@ -43,11 +43,11 @@ List of abbreviations:
 |FF|Feedforward controller|
 |FB|Feedback controller|
 
-Design of ANC systems requires measurements on the plant to be controlled. In active vibration and noise control the plant to be controlled is an electro-acoustic plant, also referred to as the *secondary path* (SP). The secondary path is the transfer function between the ANC output and the error microphone output.
+Design of a controller requires measurements of a plant to be controlled. In active noise and vibration control the plant to be controlled is an electro-acoustic plant, also referred to as the *secondary path* (SP). The secondary path is the transfer function between the ANC output and the error microphone output.
 
 <center><img src="images/SP.png" width="600"></center>
 
-It combines the properties of the digital-analog (D/A) and analog-digital (A/D) converters, analog filters, power amplifier, loudspeaker, microphone and the acoustic path between the secondary loudspeaker and error microphone.
+It combines the properties of the digital-analog (D/A) and analog-digital (A/D) converters, analog filters, power amplifier, loudspeaker, microphone, and the acoustic path between the loudspeaker and error microphone.
 
 Traditionally, an ANC system is tuned to produce optimum noise cancellation at the location of the error microphone, also called the *error reference point* (ERP). This is because most of the ANC systems rely upon monitoring the cancelled signal to work. To maximize noise cancellation, an ideal placement of an error microphone would be at the eardrum. This point is often referred to as the *drum reference point* (DRP). But that location is not practical or possible for many consumer devices. Thus, the ERP is used to provide a signal that is roughly indicative of the cancellation performance at the DRP, especially for lower frequencies (< 1 kHz). Also, sometimes it is considered acceptable to ignore any differences in noise cancellation between the ERP and the DRP.
 
@@ -179,7 +179,7 @@ Forbidden area (black) in the complex plane:
 
 Another similar constraint can be defined based on a parabola in the complex plane:
 ```math
-\mathfrak{R}\{L(\omega)\} \geq -d_1 \mathfrak{I}\{L(\omega)\}^2 - d_2
+\mathrm{Re}\{L(\omega)\} \geq -d_1 \mathrm{Im}\{L(\omega)\}^2 - d_2
 ```
 
 Forbidden area (black) in the complex plane:
