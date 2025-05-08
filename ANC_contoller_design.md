@@ -49,10 +49,8 @@ List of abbreviations:
 Traditionally, an ANC system is tuned to produce optimum noise cancellation at the location of the error microphone, also called as the *error reference point* (ERP). This is because most of the ANC systems rely upon monitoring the cancelled signal to work. To maximize noise cancellation, an ideal placement of an error microphone would be at the eardrum. This point is often referred to as the *drum reference point* (DRP) . But that location is not practical or possible for many consumer devices. Thus, the ERP is used to provide a practical signal that is roughly indicative of the cancellation performance at the DRP, especially for lower frequencies (< 1 kHz). Also, sometimes it is considered acceptable to ignore any differences in noise cancellation between the ERP and the DRP.
 
 Using [Mason's gain formula](https://en.wikipedia.org/wiki/Mason%27s_gain_formula), one can derive the transfer function:
-
-$H = \frac{\sum_k P_k \Delta_k}{\Delta}$
-
-that models the system's output $Y$ given the input $X$.
+$$ H = \frac{\sum_k P_k \Delta_k}{\Delta} $$
+ that models the system's output $Y$ given the input $X$.
 
 
 Graph determinant: $\Delta = 1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}$
@@ -64,38 +62,30 @@ Paths and co-factors:
 
 
 Transfer function: 
-```math
+$$
 \begin{aligned}
 H = \frac{Y_\text{DRP}}{X} = G_\text{DRP} + \frac{G_\text{REF} \cdot \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} - G_\text{ERP} \cdot \mathrm{FB} \cdot \mathrm{SP}_\text{DRP}}{1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}} \\ 
 = \frac{G_\text{DRP} + G_\text{REF} \cdot \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} + G_\text{DRP} \cdot \mathrm{FB} \cdot \mathrm{SP}_\text{ERP} - G_\text{ERP} \cdot \mathrm{FB} \cdot \mathrm{SP}_\text{DRP}} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}} \\
 = \frac{G_\text{DRP} + G_\text{REF} \cdot \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} + \mathrm{FB} \cdot (G_\text{DRP} \cdot \mathrm{SP}_\text{ERP} - G_\text{ERP} \cdot \mathrm{SP}_\text{DRP})} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}} \\
 = \frac{G_\text{DRP} + G_\text{REF} \cdot \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} + \mathrm{FB} \cdot G_\text{DRP} \cdot \mathrm{SP}_\text{ERP} \cdot (1 - \frac{G_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{G_\text{DRP} \cdot \mathrm{SP}_\text{ERP}})} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}} \\
 \end{aligned}
-```
+$$
 
 
-Introducing the *primary path* (PP) responses as 
-```math
-\mathrm{PP}_\text{ERP} = \frac{G_\text{ERP}}{G_\text{REF}}, \\
-\mathrm{PP}_\text{DRP} = \frac{G_\text{DRP}}{G_\text{REF}}
-```
-and
-```math
-\Delta = \frac{G_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{G_\text{DRP} \cdot \mathrm{SP}_\text{ERP}} = \frac{\mathrm{PP}_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{\mathrm{PP}_\text{DRP} \cdot \mathrm{SP}_\text{ERP}}
-```
-the transfer function can be rewritten as:
-```math
+Introducing the *primary path* (PP) responses as $\mathrm{PP}_\text{ERP} = \frac{G_\text{ERP}}{G_\text{REF}}$, $\mathrm{PP}_\text{DRP} = \frac{G_\text{DRP}}{G_\text{REF}}$ and $\Delta = \frac{G_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{G_\text{DRP} \cdot \mathrm{SP}_\text{ERP}} = \frac{\mathrm{PP}_\text{ERP} \cdot \mathrm{SP}_\text{DRP}}{\mathrm{PP}_\text{DRP} \cdot \mathrm{SP}_\text{ERP}}$, the transfer function can be rewritten as:
+$$
 \frac{Y_\text{DRP}}{G_\text{REF} \cdot X} = \frac{\mathrm{PP}_\text{DRP} + \mathrm{FF} \cdot \mathrm{SP}_\text{DRP} + \mathrm{FB} \cdot \mathrm{PP}_\text{DRP} \cdot \mathrm{SP}_\text{ERP} \cdot (1 - \Delta)} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}}
-```
+$$
 
 Given this transfer function, one can can define the [*sensitivity function*](https://en.wikipedia.org/wiki/Sensitivity_(control_systems)) for a whole system - ratio of noise with ANC ON and ANC OFF:
-```math
+$$
 S = \frac{H}{G_\text{DRP}} = \frac{1 + \frac{\mathrm{SP}_\text{DRP}}{\mathrm{PP}_\text{DRP}} \cdot \mathrm{FF} + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP} \cdot (1 - \Delta)} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}}
-```
+$$
+
 Let us assume that $\mathrm{ERP} \equiv \mathrm{DRP}$ for now. This simplifies the sensitivity function by eliminating $\mathrm{FB}$ from the numerator:
-```math
+$$
 S = \frac{1 + \frac{\mathrm{SP}_\text{ERP}}{\mathrm{PP}_\text{ERP}} \cdot \mathrm{FF}} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}}
-```
+$$
 Under this assumption, design of a hybrid ANC controller, - minimization of the sensitivity function $S$ wrt to $\mathrm{FF}$ and $\mathrm{FB}$, - decouples into two independent optimization problems. Next sections present detailed discussion about the controller design.
 
 
@@ -105,9 +95,8 @@ Let consider a feedback control system with linear time-invariant stable plant $
 
 The objective is to synthesize a linear time-invariant controller $K$ that achieves good noise attenuation within the control bandwidth.
 This can be achieved by minimizing the *sensitivity function*, *i.e.*, the [*closed-loop*](https://en.wikipedia.org/wiki/Closed-loop_transfer_function) transfer function:
-```math
-S = \frac{1}{1 + K \cdot P} = \frac{1}{1 + L} 
-```
+%% S = \frac{E}{D} = %%
+$$ S = \frac{1}{1 + K \cdot P} = \frac{1}{1 + L} $$ 
 In the case of feedback ANC, the plant is $P$ is given by the measured secondary path response(s). Here, $L$ denotes the *open-loop* transfer function. 
 
 The design goal of minimizing the sensitivity function translates to making its magnitude, $∣S∣$, as small as possible over the target frequency range where noise attenuation is desired.
@@ -155,37 +144,31 @@ The gain margin and phase margins on the [Nyquist plot](https://en.wikipedia.org
 In a practical situation a phase margin of 45° and a gain margin of 6 dB are often used.
 
 One of the ways to define a constraint is the following:
-```math
-|1 - L(\omega)| - |1+L(\omega)| \leq 2a, \forall \omega \in [0, \infty)
-```
-This inequality defines a hyperbolicnd in the complex plane. This bound not only prevents $L$ from encirclement of the point $(-1, 0)$, but also provides the following stability margins:
+$$ |1 - L(\omega)| - |1+L(\omega)| \leq 2a, \forall \omega \in [0, \infty) $$
+This inequality defines a hyperbolic bound in the complex plane. This bound not only prevents $L$ from encirclement of the point $(-1, 0)$, but also provides the following stability margins:
 
-```math
+$$
 \begin{equation}
 \begin{cases} 
 \mathrm{GM} \geq a^{-1}\\
 \mathrm{PM} \geq \cos^{-1}(a\sqrt{2-a^2})
 \end{cases}
 \end{equation}
-```
+$$
 
 Forbidden area (black) in the complex plane:
 
 <center><img src="images/constraint_hyperbola.png" width="500"></center>
 
 Another similar constraint can be defined based on a parabola in the complex plane:
-```math
-\mathfrak{R}\{L(\omega)\} \geq -d_1 \mathfrak{I}\{L(\omega)\}^2 - d_2
-```
+$$ \mathfrak{R}\{L(\omega)\} \geq -d_1 \mathfrak{I}\{L(\omega)\}^2 - d_2 $$
 
 Forbidden area (black) in the complex plane:
 
 <center><img src="images/constraint_parabola.png" width="500"></center>
 
 Finally, physical systems generally have some high frequency plant uncertainty. For instance, a slight change in the system delay could cause a large phase variation in the high-frequency band. Thus, the open-loop gain should be small enough above $\omega_{h}$:
-```math
-|L(\omega)| \leq c, \forall \omega \in [\omega_{h}, \infty)
-```
+$$ |L(\omega)| \leq c, \forall \omega \in [\omega_{h}, \infty) $$
 
 
 #### Performance constraints
@@ -195,19 +178,17 @@ According to [Bode's sensitivity integral theorem](https://en.wikipedia.org/wiki
 <center><img src="images/digger.png" width="400"></center>
 
 Therefore, to avoid excessive noise amplification ($|S|>1$), some constraint must be included to prevent the magnitude of the sensitivity function of growing too large.
-```math
-|1 + L(\omega)| \geq b, \forall \omega \in [0, \infty)
-```
+$$ |1 + L(\omega)| \geq b, \forall \omega \in [0, \infty) $$
 This constraint defines a circular region with a radius $b$ centered at $(-1, 0)$. This bound ensures that the magnitude of the sensitivity function is below $b^{-1}$ and provides the following stability margins:
 
-```math
+$$
 \begin{equation}
 \begin{cases} 
 \mathrm{GM} \geq (1 - b)^{-1}\\
 \mathrm{PM} \geq \cos^{-1}(1 - b^2/2)
 \end{cases}
 \end{equation}
-```
+$$
 
 #### Problem formulation
 
@@ -229,16 +210,16 @@ To use off-the-shelf metaheuristics available in open-source Python packages, th
 
 The key concept of the FF ANC system is that an upstream reference microphone is used to capture the noise (disturbance) *before* it reaches the control source (loudspeaker) and the desired cancellation point (error microphone). Based on the *time-advanced information* about the noise from the reference microphone, the FF ANC controller generates an antinoise signal that is equal in amplitude but opposite in phase to the disturbance signal, which is then emitted by the loudspeaker.
 In the ideal case, *i.e.*, perfect cancellation, the ANC controller should correspond to the optimal transfer function of the FF ANC filter 
-```math
+$$
 \mathrm{FF} = -\frac{\mathrm{PP}}{\mathrm{SP}} 
-```
+$$
 where the primary path $\mathrm{PP}$ represents the acoustic response from the reference microphone to the cancellation point (ERP or DRP), the secondary path $\mathrm{SP}$ is the transfer function between the ANC controller output and the cancellation point.
 So, the FF ANC filter has to model $\mathrm{PP}$ and the inverse of $\mathrm{SP}$, thus $\mathrm{FF}$ can only be realized if $\mathrm{SP}$ is a minimum phase and whereby a **stable and causal inverse exists**, which is usually not the case.
 
 In practice, designing a feedforward ANC controller is technically similar to designing a feedback controller. In both cases one needs to minimize the magnitude of the sensitivity function $S$ wrt to either $\mathrm{FF}$ or $\mathrm{FB}$ parameters:
-```math
+$$
 S = \frac{1 + \frac{\mathrm{SP}_\text{ERP}}{\mathrm{PP}_\text{ERP}} \cdot \mathrm{FF}} {1 + \mathrm{FB} \cdot \mathrm{SP}_\text{ERP}}
-```
+$$
 However, in the case of FF ANC, the problem is usually unconstrained because the stability constraints are not required.
 
 ### Dataset
@@ -265,10 +246,10 @@ Next, given the synthesized controllers, one can assess the noise reduction perf
 
 The *relative attenuation* (RA) is a widely used metric to quantify the performance of an ANC system in the frequency domain. It is a ratio of the power spectral density (PSD) of the error microphone signal with an ANC system turned *on* to the same PSD with ANC turned *off*, typically expressed in decibels (dB). A negative value of RA at a particular frequency indicates that the ANC system is reducing the noise power at that frequency. Conversely, a positive value indicates noise amplification.
 
-Assuming that the system behaves linearly, the ratio of these PSDs is approximately equal to the squared magnitude of the sensitivity function $S$ at the corresponding frequency. 
-```math
-\mathrm{RA}(\mathrm{dB}) = 10 \log_{10} \frac{\mathrm{PSD}_\text{on}}{\mathrm{PSD}_\text{off}} \approx 10 \log_{10} |S|^2
-```
+Assuming that the system behaves linearly, the ratio of these PSDs is approximately equal to the squared magnitude of the sensitivity function$S$ at the corresponding frequency. 
+
+$$ \mathrm{RA}(\mathrm{dB}) = 10 \log_{10} \frac{\mathrm{PSD}_\text{on}}{\mathrm{PSD}_\text{off}} \approx 10 \log_{10} |S|^2$$
+
 Any significant discrepancies between the $∣S∣$ predicted by the optimization process and the experimentally measured RA can point to inaccuracies in the SP model used for design, unmodeled non-linearities, or limitations imposed by the controller's implementation (*e.g.*, quantization effects, processing delay).
 
 Below is a result of running ANC system simulation.
@@ -317,7 +298,7 @@ There are studies, where the ERP vs. DRP mismatch is addressed for an ANC system
 
 ### References
 
-[^1]: **Rafaely, B., & Elliott, S. J.**  (1999). *$H_2/H_{\infty}$ Active Control of Sound in a Headrest: Design and Implementation.*
+[^1]: **Rafaely, B., & Elliott, S. J.**  (1999). *$H_2/H_∞$ Active Control of Sound in a Headrest: Design and Implementation.*
 [^2]:  **Nercessian, S., Sarroff, A. M., & Werner, K. J.**  (2021). *Lightweight and Interpretable Neural Modeling of an Audio Distortion Effect Using Hyperconditioned Differentiable Biquads.*
 [^3]:  **Klatt, W. A., Burger, M., Martin, R., & Puder, H.**  (2024). *Filter Synthesis for Robust Feedback Active Noise Control using Non-Uniformly Discretized Fourier Spectra.*
 [^4]: **Liebich, S., Fabry, J., Jax, P., & Vary, P.**  (2019). *Acoustic Path Database for ANC In-Ear Headphone Development.*
