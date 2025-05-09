@@ -17,7 +17,7 @@ Typically, ANC systems use a linear, time-invariant or adaptive, digital filter 
 
 Compared to analog controllers, one problem of a digital controller is that an extra delay is introduced. Also, in the case of headphones, the distance between the reference microphone and the speaker does not exceed 1-1.5 cm. Both problems motivate the use of higher sampling frequency to reduce the latency, but it comes with the cost of increased computational burden, making the use of FIR-based controllers impractical.
 
-This problem could be alleviated with the use of [*warped FIR*](https://www2.spsc.tugraz.at/people/franklyn/ICASSP97/pdf/scan/ic972205.pdf) filters or cascades of [*biquad*](https://en.wikipedia.org/wiki/Digital_biquad_filter) filters (2nd order IIR), the latter of which is particularly advantageous for commercial products since the controller cost could be greatly lowered and the battery lifetime could also be lengthened.
+This problem could be alleviated with the use of [*warped FIR*](https://www2.spsc.tugraz.at/people/franklyn/ICASSP97/pdf/scan/ic972205.pdf) filters or cascades of [*biquad*](https://en.wikipedia.org/wiki/Digital_biquad_filter) filters (2nd order IIR), the latter of which is particularly advantageous for commercial products since the controller complexity could be greatly reduced and the battery lifetime could be increased.
 
 The primary advantage of an IIR-based controller is its reduced computational complexity. Each biquad filter only needs 5 multiplications and 4 additions per sample to calculate its output, and the total number of multiplications or additions is less than 100. This is several orders of magnitude less than for FIR-based controllers. 
 
@@ -352,11 +352,11 @@ Please note that some images, code snippets, and text excerpts have been sourced
 
 ### References
 
-[^1]: **Rafaely, B., & Elliott, S. J.** (1999). *$H_2/H_{\infty}$ Active Control of Sound in a Headrest: Design and Implementation.*
-[^2]: **Nercessian, S., Sarroff, A. M., & Werner, K. J.** (2021). *Lightweight and Interpretable Neural Modeling of an Audio Distortion Effect Using Hyperconditioned Differentiable Biquads.*
-[^3]: **Klatt, W. A., Burger, M., Martin, R., & Puder, H.** (2024). *Filter Synthesis for Robust Feedback Active Noise Control using Non-Uniformly Discretized Fourier Spectra.*
-[^4]: **Liebich, S., Fabry, J., Jax, P., & Vary, P.** (2019). *Acoustic Path Database for ANC In-Ear Headphone Development.*
-[^5]: **Hua, Y., & Peng, L.** (2024). *Uncertainty Constraint on Headphone Secondary Path Function for Designing Cascade Biquad Feedback Controller with Improved Noise Reduction Performance.*
+[^1]: **Rafaely, B., Elliott, S. J.** (1999). *$H_2/H_{\infty}$ Active Control of Sound in a Headrest: Design and Implementation.*
+[^2]: **Nercessian, S., Sarroff, A. M., Werner, K. J.** (2021). *Lightweight and Interpretable Neural Modeling of an Audio Distortion Effect Using Hyperconditioned Differentiable Biquads.*
+[^3]: **Klatt, W. A., Burger, M., Martin, R., Puder, H.** (2024). *Filter Synthesis for Robust Feedback Active Noise Control using Non-Uniformly Discretized Fourier Spectra.*
+[^4]: **Liebich, S., Fabry, J., Jax, P., Vary, P.** (2019). *Acoustic Path Database for ANC In-Ear Headphone Development.*
+[^5]: **Hua, Y., Peng, L.** (2024). *Uncertainty Constraint on Headphone Secondary Path Function for Designing Cascade Biquad Feedback Controller with Improved Noise Reduction Performance.*
 [^6]: **Benois, P.R., Zölzer, U.** (2019). *Psychoacoustic Optimization of a Feedback Controller for Active Noise Cancelling Headphones.*
-[^7]: **Klatt, W. A., & Martin, R.** (2025). *Control Filter Design with Convex-Set-Based Uncertainty Model for Robust Feedback Active Noise Control.*
-[^8]: **An, F., Wu, Q., & Liu, B.** (2022). *Feedback Controller Optimization for Active Noise Control Headphones Considering Frequency Response Mismatch between Microphone and Human Ear.*
+[^7]: **Klatt, W. A., Martin, R.** (2025). *Control Filter Design with Convex-Set-Based Uncertainty Model for Robust Feedback Active Noise Control.*
+[^8]: **An, F., Wu, Q., Liu, B.** (2022). *Feedback Controller Optimization for Active Noise Control Headphones Considering Frequency Response Mismatch between Microphone and Human Ear.*
