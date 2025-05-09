@@ -36,17 +36,17 @@ List of abbreviations:
 |-|:-|
 |ERP|Error reference point (error microphone location)|
 |DRP|Drum reference point|
-|REF|Reference microphone location|
+|REF|Reference microphone|
 |PP|Primary path|
 |SP|Secondary path|
 |FF|Feedforward controller|
 |FB|Feedback controller|
 
-Design of a controller requires measurements of a plant to be controlled. In active noise and vibration control the plant to be controlled is an electro-acoustic plant, also referred to as the *secondary path* (SP). The secondary path is the transfer function between the ANC output and the error microphone output.
+Designing a controller necessitates obtaining accurate measurements of the plant to be controlled. In (feedback) active noise control, the plant includes multiple electro-acoustic components and the acoustic path inside the ear. This path from the ANC output to the error microphone output is commonly referred to as the *secondary path* (SP).
 
 <center><img src="images/SP.png" width="600"></center>
 
-It combines the properties of the digital-analog (D/A) and analog-digital (A/D) converters, analog filters, power amplifier, loudspeaker, microphone, and the acoustic path between the loudspeaker and error microphone.
+The SP combines the properties of the digital-analog (D/A) and analog-digital (A/D) converters, analog filters, power amplifier, loudspeaker, microphone, and the acoustic path between the loudspeaker and error microphone.
 
 Traditionally, an ANC system is tuned to produce optimal noise cancellation at the location of the error microphone, also called the *error reference point* (ERP). This is because most of the ANC systems rely upon monitoring the cancelled signal to work. To maximize noise cancellation, an ideal placement of an error microphone would be at the eardrum. This point is often referred to as the *drum reference point* (DRP). However, that location is not practical or possible for many consumer devices. Thus, the ERP is used to provide a signal that is roughly indicative of the cancellation performance at the DRP, especially for lower frequencies (< 1 kHz). Also, sometimes it is considered acceptable to ignore any differences in noise cancellation between the ERP and the DRP.
 
@@ -161,11 +161,13 @@ The gain margin and phase margins on the [Nyquist plot](https://en.wikipedia.org
 
 In a practical situation a phase margin of 45° and a gain margin of 6 dB are often used.
 
+
+##### Constraint on the Nyquist stability: option #1
 One of the ways to define a constraint is the following:
 ```math
 |1 - L(\omega)| - |1+L(\omega)| \leq 2a, \forall \omega \in [0, \infty)
 ```
-This inequality defines a hyperbolic curve in the complex plane. This bound not only prevents $L$ from encirclement of the point $(-1, 0)$, but also provides the following stability margins:
+where $a \in (0, 1)$ is a parameter connected to the stability margin. This inequality defines a hyperbolic curve in the complex plane. This bound not only prevents $L$ from encirclement of the critical point $(-1, 0)$, but also provides the following stability margins:
 
 ```math
 \begin{equation}
@@ -175,11 +177,13 @@ This inequality defines a hyperbolic curve in the complex plane. This bound not 
 \end{cases}
 \end{equation}
 ```
+The smaller values of $a$ imply a larger stability margin.
 
 Forbidden area (gray) in the complex plane:
 
 <center><img src="images/constraint_hyperbola.png" width="500"></center>
 
+##### Constraint on the Nyquist stability: option #2
 Another similar constraint can be defined based on a parabola in the complex plane:
 ```math
 \mathrm{Re}\{L(\omega)\} \geq -d_1 \mathrm{Im}\{L(\omega)\}^2 - d_2
@@ -189,10 +193,12 @@ Forbidden area (gray) in the complex plane:
 
 <center><img src="images/constraint_parabola.png" width="500"></center>
 
+##### Constraint on the high frequency plant uncertainty
 Finally, physical systems generally have some high frequency plant uncertainty. For instance, a slight change in the system delay could cause a large phase variation in the high-frequency band. Thus, the open-loop gain should be small enough above $\omega_{h}$:
 ```math
 |L(\omega)| \leq c, \forall \omega \in [\omega_{h}, \infty)
 ```
+where $c \in (0, 1)$. This constraint defines a circular region with a radius $c$ around the origin.
 
 #### Performance constraints
 
@@ -204,7 +210,7 @@ Therefore, to avoid excessive noise amplification ($|S|>1$), some constraint mus
 ```math
 |1 + L(\omega)| \geq b, \forall \omega \in [0, \infty)
 ```
-This constraint defines a circular region with a radius $b$ centered at $(-1, 0)$. This bound ensures that the magnitude of the sensitivity function is below $b^{-1}$ and provides the following stability margins:
+This constraint defines a circular region with a radius $b \in (0, 1)$ centered at $(-1, 0)$. This bound provides the following stability margins:
 
 ```math
 \begin{equation}
@@ -214,6 +220,7 @@ This constraint defines a circular region with a radius $b$ centered at $(-1, 0)
 \end{cases}
 \end{equation}
 ```
+and ensures that the magnitude of the sensitivity function is below $b^{-1}$.
 
 #### Problem formulation
 
@@ -346,3 +353,7 @@ There are studies where the ERP vs. DRP mismatch is addressed for an ANC system 
 [^6]: **Benois, P.R., Zölzer, U.** (2019). *Psychoacoustic Optimization of a Feedback Controller for Active Noise Cancelling Headphones.*
 [^7]: **Klatt, W. A., & Martin, R.** (2025). *Control Filter Design with Convex-Set-Based Uncertainty Model for Robust Feedback Active Noise Control.*
 [^8]: **An, F., Wu, Q., & Liu, B.** (2022). *Feedback Controller Optimization for Active Noise Control Headphones Considering Frequency Response Mismatch between Microphone and Human Ear.*
+
+### Notice
+
+Please note that some images, code snippets, and text excerpts have been sourced from various publicly available materials and are not original to the repository's contributors. The owner apologizes for the lack of citations for these materials.
