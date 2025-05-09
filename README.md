@@ -235,9 +235,11 @@ In summary, given the frequency response of the plant (secondary path), a feedba
 ```
 Here, $W$ denotes a frequency weighting function. A large value of $W$ for a particular frequency $\omega$ encourages the optimization method to concentrate its effort on this frequency.
 
-Since continuous frequency responses cannot be directly handled by numerical optimization algorithms, they must be discretized. This involves evaluating the SP response, the controller response, and the weighting function at a finite set of discrete frequency points $\omega$. The objective function and all frequency-dependent constraints are then formulated based on these points. 
+The objective function and the constraints were formulated based on the average PP and SP responses computed from the dataset of measurements collected from the headphone system.
 
 ##### Frequency discretization
+
+Since continuous frequency responses cannot be directly handled by numerical optimization algorithms, they must be discretized. This involves evaluating the SP response, the controller response, and the weighting function at a finite set of discrete frequency points $\omega$. The objective function and all frequency-dependent constraints are then formulated based on these points. 
 
 A critical aspect of this discretization is ensuring that the behavior of the system between these sample points remains acceptable. The number of frequency points, $N$, must be sufficiently large to adequately capture the variations in the frequency responses and to prevent undesirable phenomena. If it is too small, the controller might satisfy all criteria at the selected discrete points, but exhibit poor performance or even instability due to large, undetected peaks or phase shifts in the sensitivity function or loop transfer function occurring between these points. However, increasing $N$ to improve the resolution of the frequency response comes at the cost of increased computational complexity. Each iteration of the optimization algorithm requires the evaluation of the objective function and all relevant constraints at each of the $N$ frequency points. For complex controllers or a large number of constraints, this can lead to prohibitively long optimization times.
 
@@ -343,6 +345,11 @@ There are studies where the ERP vs. DRP mismatch is addressed for an ANC system 
 
 ...<u>work in progress</u>!
 
+
+### Notice
+
+Please note that some images, code snippets, and text excerpts have been sourced from various publicly available materials and are not original to the repository's contributors. The owner apologizes for the lack of citations for these materials.
+
 ### References
 
 [^1]: **Rafaely, B., & Elliott, S. J.** (1999). *$H_2/H_{\infty}$ Active Control of Sound in a Headrest: Design and Implementation.*
@@ -353,7 +360,3 @@ There are studies where the ERP vs. DRP mismatch is addressed for an ANC system 
 [^6]: **Benois, P.R., Zölzer, U.** (2019). *Psychoacoustic Optimization of a Feedback Controller for Active Noise Cancelling Headphones.*
 [^7]: **Klatt, W. A., & Martin, R.** (2025). *Control Filter Design with Convex-Set-Based Uncertainty Model for Robust Feedback Active Noise Control.*
 [^8]: **An, F., Wu, Q., & Liu, B.** (2022). *Feedback Controller Optimization for Active Noise Control Headphones Considering Frequency Response Mismatch between Microphone and Human Ear.*
-
-### Notice
-
-Please note that some images, code snippets, and text excerpts have been sourced from various publicly available materials and are not original to the repository's contributors. The owner apologizes for the lack of citations for these materials.
