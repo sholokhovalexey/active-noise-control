@@ -29,7 +29,7 @@ class SolverMetaHeuristic(Solver):
         lb, ub = unpack_bounds(bounds)
         lb, ub = list(lb), list(ub)
         bounds = [FloatVar(lb=lb, ub=ub, name="x")]
-            
+        
         problem_mealpy = ProblemWrapperMealpy(problem, bounds)
         problem_mealpy.log_to = None
         self.problem = problem_mealpy

@@ -7,7 +7,11 @@ This report discusses the task of designing an ANC system for **headphones**.
 
 According to the control structure, controllers can be categorized into the [*feedforward*](https://en.wikipedia.org/wiki/Feed_forward_(control)) (FF) and [*feedback*](https://en.wikipedia.org/wiki/Closed-loop_controller) (FB) types. The former uses the signal from the reference microphone, while the latter relies on the error signal coming from the error microphone. If an ANC system includes both controllers, it is usually called a *hybrid* system.
 
+We consider the classical hybrid ANC sructure:
+
 <center><img src="images/hybrid_anc.png" width="300"></center>
+
+Overview of the alternative structures can be found in the article [^1].
 
 The controller synthesis problem can be formulated as a **constrained optimization problem**. The problem is formulated based on a **dataset of measured impulse responses** of a headphone system.
 
@@ -140,11 +144,11 @@ Below is an illustration of weighting functions used for FF and FB controller de
 
 #### Controller parameterization
 
-In [^1], a method for designing an ANC controller, represented as an FIR filter, was proposed. The coefficients of the filter were found by solving a *convex optimization* problem. Despite the convenience of the problem formulation and the uniqueness of the solution, practical implementations of FIR controllers are usually restricted by their computational complexity. Therefore, IIR filters are usually preferred for implementing ANC controllers. Also, a cascade of 5-10 biquad filters can approximate a prescribed frequency response with reasonable accuracy, required for building a competitive ANC system. Here, **cascades of biquad filters** are used as the feedback and feedforward controllers, similar to the most commercial ANC headphones currently available on the market (2024). 
+In [^2], a method for designing an ANC controller, represented as an FIR filter, was proposed. The coefficients of the filter were found by solving a *convex optimization* problem. Despite the convenience of the problem formulation and the uniqueness of the solution, practical implementations of FIR controllers are usually restricted by their computational complexity. Therefore, IIR filters are usually preferred for implementing ANC controllers. Also, a cascade of 5-10 biquad filters can approximate a prescribed frequency response with reasonable accuracy, required for building a competitive ANC system. Here, **cascades of biquad filters** are used as the feedback and feedforward controllers, similar to the most commercial ANC headphones currently available on the market (2024). 
 
 ##### Filter parameterization
 
-Instead of the general form represented with poles and zeros, several kinds of parametric biquad filters are considered here. See [^2] for details.
+Instead of the general form represented with poles and zeros, several kinds of parametric biquad filters are considered here. See [^3] for details.
 
 
 #### Stability constraints
@@ -243,7 +247,7 @@ Since continuous frequency responses cannot be directly handled by numerical opt
 
 A critical aspect of this discretization is ensuring that the behavior of the system between these sample points remains acceptable. The number of frequency points, $N$, must be sufficiently large to adequately capture the variations in the frequency responses and to prevent undesirable phenomena. If it is too small, the controller might satisfy all criteria at the selected discrete points, but exhibit poor performance or even instability due to large, undetected peaks or phase shifts in the sensitivity function or loop transfer function occurring between these points. However, increasing $N$ to improve the resolution of the frequency response comes at the cost of increased computational complexity. Each iteration of the optimization algorithm requires the evaluation of the objective function and all relevant constraints at each of the $N$ frequency points. For complex controllers or a large number of constraints, this can lead to prohibitively long optimization times.
 
-To mitigate this trade-off between accuracy and computational burden, non-uniformly discretized spectra offer a promising approach [^3]. Instead of a uniform spacing of frequency points, this technique employs a variable density of points. More points are allocated to frequency regions deemed critical for the ANC system's performance or stability, while fewer points are used in less critical regions.
+To mitigate this trade-off between accuracy and computational burden, non-uniformly discretized spectra offer a promising approach [^4]. Instead of a uniform spacing of frequency points, this technique employs a variable density of points. More points are allocated to frequency regions deemed critical for the ANC system's performance or stability, while fewer points are used in less critical regions.
 
 #### Controller optimization
 
@@ -251,7 +255,7 @@ The optimization problem described above is highly non-convex since the controll
 
 Consequently, [metaheuristics](https://en.wikipedia.org/wiki/Metaheuristic) are often used to solve such problems. These algorithms aim to find a global (rather than local) optimum, and although they have no guarantee of good performance, they have been found to perform acceptably in many use cases. Examples of such algorithms include evolutionary algorithms, particle swarm optimization, etc.
 
-To use off-the-shelf metaheuristics available in open-source Python packages, the original optimization problem should be formulated as an unconstrained problem. This is done by adding the constraints as additional penalty terms to the original objective function, similar to [^5].
+To use off-the-shelf metaheuristics available in open-source Python packages, the original optimization problem should be formulated as an unconstrained problem. This is done by adding the constraints as additional penalty terms to the original objective function, similar to [^6].
 
 
 ### Feedforward controller design
@@ -273,7 +277,7 @@ However, in the case of FF ANC, the problem is usually unconstrained because the
 
 ### Dataset
 
-We used the data from the [PANDAR](https://www.iks.rwth-aachen.de/en/research/tools-downloads/databases/paths-for-active-noise-cancellation-development-and-research/) database of acoustic paths [^4], which provides impulse responses measured for multiple persons equipped with a Bose QC20 in-ear headphone.
+We used the data from the [PANDAR](https://www.iks.rwth-aachen.de/en/research/tools-downloads/databases/paths-for-active-noise-cancellation-development-and-research/) database of acoustic paths [^5], which provides impulse responses measured for multiple persons equipped with a Bose QC20 in-ear headphone.
 
 <center><img src="images/BoseQC20.jpg" width="400"></center>
 
@@ -317,11 +321,11 @@ For practical design of an ANC system, several issues must be considered, such a
 
 #### Plant uncertainty
 
-The resulting ANC system depends on the secondary path and the primary path measurements. Both the secondary path and the primary path can vary according to the placement of the earpiece in the ear, the shape of the ear canal, the level of leakage, etc. The figure below shows variations of the secondary path responses estimated from different persons and a dummy head[^4].
+The resulting ANC system depends on the secondary path and the primary path measurements. Both the secondary path and the primary path can vary according to the placement of the earpiece in the ear, the shape of the ear canal, the level of leakage, etc. The figure below shows variations of the secondary path responses estimated from different persons and a dummy head[^5].
 
 <center><img src="images/QC20-SP.png" width="400"></center>
 
-In order to obtain a robust system, uncertainties of the plant (secondary path) need to be considered. The multiplicative uncertainty model is a common choice. It describes the plant by means of a multiplicative deviation from a nominal path [^5][^6][^7].
+In order to obtain a robust system, uncertainties of the plant (secondary path) need to be considered. The multiplicative uncertainty model is a common choice. It describes the plant by means of a multiplicative deviation from a nominal path [^6][^7][^8].
 
 Multiplicative uncertainty model:
 
@@ -341,7 +345,7 @@ $r = S_0(\omega) \max_i | \frac{S_i(\omega) - S_0(\omega)}{S_0(\omega)} | \appro
 
 In the discussion above, the ANC performance was generally evaluated at the error microphone location, aka the error reference point (ERP).
 However, the residual error signal at the ERP might be different from the one perceived by the human ear at the eardrum, aka the drum reference point (DRP).
-There are studies where the ERP vs. DRP mismatch is addressed for an ANC system design [^8].
+There are studies where the ERP vs. DRP mismatch is addressed for an ANC system design [^9].
 
 ...<u>work in progress</u>!
 
@@ -352,11 +356,12 @@ Please note that some images, code snippets, and text excerpts have been sourced
 
 ### References
 
-[^1]: **Rafaely, B., Elliott, S. J.** (1999). *$H_2/H_{\infty}$ Active Control of Sound in a Headrest: Design and Implementation.*
-[^2]: **Nercessian, S., Sarroff, A. M., Werner, K. J.** (2021). *Lightweight and Interpretable Neural Modeling of an Audio Distortion Effect Using Hyperconditioned Differentiable Biquads.*
-[^3]: **Klatt, W. A., Burger, M., Martin, R., Puder, H.** (2024). *Filter Synthesis for Robust Feedback Active Noise Control using Non-Uniformly Discretized Fourier Spectra.*
-[^4]: **Liebich, S., Fabry, J., Jax, P., Vary, P.** (2019). *Acoustic Path Database for ANC In-Ear Headphone Development.*
-[^5]: **Hua, Y., Peng, L.** (2024). *Uncertainty Constraint on Headphone Secondary Path Function for Designing Cascade Biquad Feedback Controller with Improved Noise Reduction Performance.*
-[^6]: **Benois, P.R., Zölzer, U.** (2019). *Psychoacoustic Optimization of a Feedback Controller for Active Noise Cancelling Headphones.*
-[^7]: **Klatt, W. A., Martin, R.** (2025). *Control Filter Design with Convex-Set-Based Uncertainty Model for Robust Feedback Active Noise Control.*
-[^8]: **An, F., Wu, Q., Liu, B.** (2022). *Feedback Controller Optimization for Active Noise Control Headphones Considering Frequency Response Mismatch between Microphone and Human Ear.*
+[^1]: **Benois, P.R., Nowak, P., Zölzer, U.** (2018). *Hybrid Active Noise Control Structures: A Short Overview.*
+[^2]: **Rafaely, B., Elliott, S. J.** (1999). *$H_2/H_{\infty}$ Active Control of Sound in a Headrest: Design and Implementation.*
+[^3]: **Nercessian, S., Sarroff, A. M., Werner, K. J.** (2021). *Lightweight and Interpretable Neural Modeling of an Audio Distortion Effect Using Hyperconditioned Differentiable Biquads.*
+[^4]: **Klatt, W. A., Burger, M., Martin, R., Puder, H.** (2024). *Filter Synthesis for Robust Feedback Active Noise Control using Non-Uniformly Discretized Fourier Spectra.*
+[^5]: **Liebich, S., Fabry, J., Jax, P., Vary, P.** (2019). *Acoustic Path Database for ANC In-Ear Headphone Development.*
+[^6]: **Hua, Y., Peng, L.** (2024). *Uncertainty Constraint on Headphone Secondary Path Function for Designing Cascade Biquad Feedback Controller with Improved Noise Reduction Performance.*
+[^7]: **Benois, P.R., Zölzer, U.** (2019). *Psychoacoustic Optimization of a Feedback Controller for Active Noise Cancelling Headphones.*
+[^8]: **Klatt, W. A., Martin, R.** (2025). *Control Filter Design with Convex-Set-Based Uncertainty Model for Robust Feedback Active Noise Control.*
+[^9]: **An, F., Wu, Q., Liu, B.** (2022). *Feedback Controller Optimization for Active Noise Control Headphones Considering Frequency Response Mismatch between Microphone and Human Ear.*
