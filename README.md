@@ -347,7 +347,7 @@ In the discussion above, the ANC performance was generally evaluated at the erro
 However, the residual error signal at the ERP might be different from the one perceived by the human ear at the eardrum, aka the drum reference point (DRP).
 There are studies where the ERP vs. DRP mismatch is addressed for an ANC system design [^9].
 
-...<u>work in progress</u>!
+...<u>work in progress</u>! Contributions are welcome!
 
 
 ### Notice
