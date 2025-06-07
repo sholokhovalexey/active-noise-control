@@ -232,7 +232,7 @@ In summary, given the frequency response of the plant (secondary path), a feedba
 ```math
 \begin{aligned}
 \min_{\mathbf{\theta}} \quad & \|W(\omega) S(\omega; \mathbf{\theta})\|^2_2 \\
-\text{s.t.} \quad & |1 - L(\omega; \boldsymbol{\theta})| - |1 + L(\omega; \mathbf{\theta})| \leq 2a, \forall \omega \in [0, \infty) \\
+\text{s.t.} \quad & |1 - L(\omega; \mathbf{\theta})| - |1 + L(\omega; \mathbf{\theta})| \leq 2a, \forall \omega \in [0, \infty) \\
 & |1 + L(\omega; \mathbf{\theta})| \geq b, \forall \omega \in [0, \infty) \\
 & |L(\omega; \mathbf{\theta})| \leq c, \forall \omega \in [\omega_{h}, \infty) \\
 \end{aligned}
