@@ -31,3 +31,10 @@ def next_power_of_two(x):
 
 def relative_difference(x, y, eps=1e-16):
     return np.linalg.norm(x - y) / (np.linalg.norm.norm(y) + eps)
+
+
+def bell_curve(n):
+    from scipy.stats import norm
+    x = np.linspace(-3, 3, n)
+    pdf = norm(0, 1).pdf(x)
+    return pdf

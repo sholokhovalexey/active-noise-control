@@ -115,7 +115,7 @@ class ProblemFeedforward(ProblemFreq):
         freq, self.SP = freqz(SP, 1, worN=self.n_fft, fs=self.fs, log=self.logspace)
         self.FB = 0 if FB is None else FB
         if weighting is None:
-            weighting = 1 #make_weighting_function(self.n_fft)
+            weighting = 1 # make_weighting_function(self.n_fft)
         self.weighting = weighting
         super().init()
         
@@ -125,10 +125,20 @@ class ProblemFeedforward(ProblemFreq):
         return freq, S_ff
     
     def objective(self, sos):
-        S_ff = self.sensitivity(sos)
+        freq, S_ff = self.sensitivity(sos)
         if isinstance(self.FB, np.ndarray):
             H = self.SP * self.FB # open loop
             S_ff /= (1 + H)
         loss = np.mean(self.weighting * (np.abs(S_ff)**2))
         # loss = np.mean(self.weighting * librosa.amplitude_to_db(np.abs(S_ff)))
         return loss
+
+    def add_constraints(self, cfg):
+        assert hasattr(self, "constraints")
+
+        constraint_lowfreq = ConstraintLowFreq(20000, cfg.gain_max_ff)
+        def constraint_lowfreq_fn(sos):
+            w, S = self.sensitivity(sos)
+            return constraint_lowfreq(w, S)
+        f = compose(np.max, constraint_lowfreq_fn)
+        self.add_constraint(f, name="max_gain", keep_feasible=True)

@@ -58,6 +58,9 @@ def freqz(
 def sosfreqz(sos, worN=512, whole=False, fs=2 * np.pi, log=False, mode="poly"):
     """Compute the frequency response of a digital filter in SOS format."""
 
+    if sos.ndim == 1:
+        sos = np.expand_dims(sos, axis=0)
+
     h = 1.0
     for row in sos:
         w, rowh = freqz(

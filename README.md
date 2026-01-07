@@ -349,6 +349,10 @@ There are studies where the ERP vs. DRP mismatch is addressed for an ANC system 
 
 ...<u>work in progress</u>! Contributions are welcome!
 
+#### Adaptive ANC
+
+[Adaptive ANC](adaptive_anc.ipynb)
+
 
 ### Notice
 

@@ -26,8 +26,10 @@ freqs *= 0.5
 gain_margin = 3 # 6
 phase_margin = 30 # 45
 
-gain_max = 6
+gain_max = 3
 
 freq_low = 10
 freq_high = 2000
 gain_open_max = 0
+
+gain_max_ff = 3

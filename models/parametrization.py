@@ -1,4 +1,5 @@
 import numpy as np
+import yaml
 from dsp.filters import parametric_eq, sos_general_parametric
 
 
@@ -17,6 +18,16 @@ class Parametrization:
     
     def __call__(self, x):
         return self.decode(x)
+
+    def load(self, fname):
+        with open(fname, "r") as f:
+            data = yaml.load(f, Loader=yaml.loader.SafeLoader)
+
+        if not data["name"] == self.__class__.__name__:
+            print(f'Wrong parametrization: {data["name"]} != {self.__class__.__name__}')
+            
+        x = np.array(data["params"], dtype=np.float64)
+        return x
 
 
 class ParametrizationEQ(Parametrization):
@@ -41,11 +52,17 @@ class ParametrizationEQ(Parametrization):
         f, Q, g = np.array_split(x, 3)
         sos = self.params_to_sos(f, Q, g)
         return sos
-    
+
+    def encode(self, x):
+        x = np.array(x)
+        assert x.shape[1] == 3
+        f, Q, g = np.array_split(x, 3, axis=1)
+        return np.r_[f, Q, g].ravel()
+        
     def bounds(self):
         f_min, f_max = 1., 20000.
         Q_min, Q_max = 0.1, 10
-        g_min, g_max = -10, 10
+        g_min, g_max = -20, 20
 
         bounds = []
         bounds += [(f_min, f_max)] * self.n_sections
@@ -53,7 +70,16 @@ class ParametrizationEQ(Parametrization):
         bounds += [(g_min, g_max)] * self.n_sections
         return bounds
 
-        
+    def save(self, fname, x):
+        data_dict = {}
+        data_dict["name"] = self.__class__.__name__
+        data_dict["fs"] = self.fs
+        data_dict["ftypes"] = self.ftypes
+        data_dict["params"] = [str(x[i]) for i in range(len(x))]
+        with open(fname, "w") as file:
+            yaml.dump(data_dict, file, default_flow_style=False)
+
+    
 class ParametrizationGeneral(Parametrization):
     def __init__(self, n_sections, fs):
         super().__init__()
@@ -80,7 +106,7 @@ class ParametrizationGeneral(Parametrization):
     def bounds(self):
         f_min, f_max = 1., 20000.
         Q_min, Q_max = 0.1, 10
-        g_min, g_max = -10, 10
+        g_min, g_max = -20, 20
 
         bounds = []
         bounds += [(f_min, f_max)] * self.n_sections
@@ -89,4 +115,12 @@ class ParametrizationGeneral(Parametrization):
         bounds += [(f_min, f_max)] * self.n_sections
         bounds += [(Q_min, Q_max )] * self.n_sections
         return bounds
-        
+
+    def save(self, fname, x):
+        data_dict = {}
+        data_dict["name"] = self.__class__.__name__
+        data_dict["fs"] = self.fs
+        data_dict["ftypes"] = self.ftypes
+        data_dict["params"] = [str(x[i]) for i in range(len(x))]
+        with open(fname, "w") as file:
+            yaml.dump(data_dict, file, default_flow_style=False)
